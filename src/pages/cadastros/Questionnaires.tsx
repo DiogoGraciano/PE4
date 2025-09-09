@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Search, FileText, X, Save, Eye, Code, Palette } from 'lucide-react';
+import { Plus, Edit, Trash2, FileText, Save, Eye, Code, Palette } from 'lucide-react';
 import apiService from '../../services/api';
-import type { Questionnaire, QuestionField, QuestionFormData } from '../../types';
+import type { Questionnaire, QuestionField } from '../../types';
 import DynamicForm from '../../components/DynamicForm';
 import FormBuilder from '../../components/FormBuilder';
+import DataTable, { type Column, type ActionButton } from '../../components/DataTable';
+import SearchFilter from '../../components/SearchFilter';
+import Modal from '../../components/Modal';
 
 const Questionnaires: React.FC = () => {
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
@@ -207,143 +210,133 @@ const Questionnaires: React.FC = () => {
     q.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Questionários</h1>
-        <button
-          onClick={openNewModal}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-        >
-          <Plus size={20} />
-          Novo Questionário
-        </button>
-      </div>
-
-      {/* Barra de pesquisa */}
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-          <input
-            type="text"
-            placeholder="Buscar questionários..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-
-      {/* Lista de questionários */}
-      {isLoading ? (
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        </div>
-      ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nome
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Campos
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Criado em
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredQuestionnaires.map((questionnaire) => {
-                let fieldCount = 0;
-                try {
-                  const fields = JSON.parse(questionnaire.questionario_json);
-                  fieldCount = Array.isArray(fields) ? fields.length : 0;
-                } catch (error) {
-                  fieldCount = 0;
-                }
-
-                return (
-                  <tr key={questionnaire.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <FileText className="h-5 w-5 text-blue-600 mr-3" />
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {questionnaire.nome}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {fieldCount} campo{fieldCount !== 1 ? 's' : ''}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(questionnaire.created_at).toLocaleDateString('pt-BR')}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => handlePreview(questionnaire)}
-                          className="text-blue-600 hover:text-blue-900 p-1"
-                          title="Visualizar"
-                        >
-                          <Eye size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleEdit(questionnaire)}
-                          className="text-indigo-600 hover:text-indigo-900 p-1"
-                          title="Editar"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(questionnaire.id)}
-                          className="text-red-600 hover:text-red-900 p-1"
-                          title="Excluir"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          
-          {filteredQuestionnaires.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              Nenhum questionário encontrado.
+  // Definição das colunas da tabela
+  const questionnaireColumns: Column<Questionnaire>[] = [
+    {
+      key: 'nome',
+      label: 'Nome',
+      render: (questionnaire) => (
+        <div className="flex items-center">
+          <FileText className="h-5 w-5 text-blue-600 mr-3" />
+          <div>
+            <div className="text-sm font-medium text-gray-900">
+              {questionnaire.nome}
             </div>
-          )}
+          </div>
         </div>
-      )}
+      )
+    },
+    {
+      key: 'campos',
+      label: 'Campos',
+      render: (questionnaire) => {
+        let fieldCount = 0;
+        try {
+          const fields = JSON.parse(questionnaire.questionario_json);
+          fieldCount = Array.isArray(fields) ? fields.length : 0;
+        } catch (error) {
+          fieldCount = 0;
+        }
+        return (
+          <span className="text-sm text-gray-500">
+            {fieldCount} campo{fieldCount !== 1 ? 's' : ''}
+          </span>
+        );
+      }
+    },
+    {
+      key: 'created_at',
+      label: 'Criado em',
+      render: (questionnaire) => (
+        <span className="text-sm text-gray-500">
+          {new Date(questionnaire.created_at).toLocaleDateString('pt-BR')}
+        </span>
+      )
+    }
+  ];
+
+  // Definição das ações da tabela
+  const questionnaireActions: ActionButton<Questionnaire>[] = [
+    {
+      icon: <Eye className="w-4 h-4" />,
+      onClick: handlePreview,
+      className: "text-blue-600 hover:text-blue-900",
+      title: "Visualizar"
+    },
+    {
+      icon: <Edit className="w-4 h-4" />,
+      onClick: handleEdit,
+      className: "text-indigo-600 hover:text-indigo-900",
+      title: "Editar"
+    },
+    {
+      icon: <Trash2 className="w-4 h-4" />,
+      onClick: (questionnaire) => handleDelete(questionnaire.id),
+      className: "text-red-600 hover:text-red-900",
+      title: "Excluir"
+    }
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Questionários</h1>
+        <p className="mt-1 text-sm text-gray-600">
+          Gerencie os questionários dinâmicos do sistema
+        </p>
+      </div>
+
+      {/* Actions and Filters */}
+      <SearchFilter
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Buscar questionários..."
+        actions={
+          <button
+            onClick={openNewModal}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Questionário
+          </button>
+        }
+      />
+
+      {/* Questionnaires List */}
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-medium text-gray-900">
+            Lista de Questionários ({filteredQuestionnaires.length})
+          </h3>
+        </div>
+        
+        <DataTable
+          data={filteredQuestionnaires}
+          columns={questionnaireColumns}
+          actions={questionnaireActions}
+          loading={isLoading}
+          emptyState={{
+            icon: <FileText className="mx-auto h-12 w-12 text-gray-400" />,
+            title: "Nenhum questionário encontrado",
+            description: searchTerm
+              ? 'Tente ajustar os filtros de busca.'
+              : 'Comece criando um novo questionário.'
+          }}
+        />
+      </div>
 
       {/* Modal de criação/edição */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">
-                {editingQuestionnaire ? 'Editar Questionário' : 'Novo Questionário'}
-              </h2>
-              <button
-                onClick={() => {
-                  setShowModal(false);
-                  setEditingQuestionnaire(null);
-                  resetForm();
-                }}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X size={24} />
-              </button>
-            </div>
+      <Modal
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false);
+          setEditingQuestionnaire(null);
+          resetForm();
+        }}
+        title={editingQuestionnaire ? 'Editar Questionário' : 'Novo Questionário'}
+        size="xl"
+      >
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -453,35 +446,24 @@ const Questionnaires: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Modal de preview */}
-      {showPreviewModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Preview do Questionário</h2>
-              <button
-                onClick={() => setShowPreviewModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <DynamicForm
-              fields={previewFields}
-              onSubmit={() => {}} // Não faz nada no preview
-              readOnly={true}
-              submitLabel=""
-              cancelLabel="Fechar"
-              onCancel={() => setShowPreviewModal(false)}
-            />
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={showPreviewModal}
+        onClose={() => setShowPreviewModal(false)}
+        title="Preview do Questionário"
+        size="lg"
+      >
+        <DynamicForm
+          fields={previewFields}
+          onSubmit={() => {}} // Não faz nada no preview
+          readOnly={true}
+          submitLabel=""
+          cancelLabel="Fechar"
+          onCancel={() => setShowPreviewModal(false)}
+        />
+      </Modal>
     </div>
   );
 };
