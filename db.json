@@ -1,0 +1,513 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "nome": "Administrador",
+      "email": "admin@empresa.com",
+      "tipo_usuario": "admin",
+      "telefone": "(11) 99999-0000",
+      "cpf": "00000000000",
+      "cep": "01234-567",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "bairro": "Centro",
+      "pais": "Brasil",
+      "numero_endereco": "123",
+      "complemento": "Sala 1001",
+      "created_at": "2024-01-01T00:00:00.000Z",
+      "updated_at": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "nome": "João Silva",
+      "email": "joao@empresa.com",
+      "tipo_usuario": "funcionario",
+      "telefone": "(11) 99999-1111",
+      "cpf": "11111111111",
+      "cep": "01234-567",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "bairro": "Centro",
+      "pais": "Brasil",
+      "numero_endereco": "456",
+      "complemento": "Sala 2002",
+      "created_at": "2024-01-15T00:00:00.000Z",
+      "updated_at": "2024-01-15T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "nome": "Maria Santos",
+      "email": "maria@empresa.com",
+      "tipo_usuario": "aluno",
+      "telefone": "(11) 99999-2222",
+      "cpf": "22222222222",
+      "cep": "01234-567",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "bairro": "Centro",
+      "pais": "Brasil",
+      "numero_endereco": "789",
+      "complemento": "Sala 3003",
+      "created_at": "2024-02-01T00:00:00.000Z",
+      "updated_at": "2024-02-01T00:00:00.000Z"
+    }
+  ],
+  "students": [
+    {
+      "id": "1",
+      "nome": "Carlos Eduardo",
+      "email": "carlos.eduardo@email.com",
+      "tipo_usuario": "aluno",
+      "telefone": "(11) 99999-1234",
+      "cpf": "12345678901",
+      "cep": "01234-567",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "bairro": "Centro",
+      "pais": "Brasil",
+      "numero_endereco": "123",
+      "complemento": "Apto 101",
+      "codigo": "STU001",
+      "responsavel": "João Silva",
+      "observacao": "Estudante dedicado e participativo",
+      "empresa_id": 1,
+      "funcao_id": 1,
+      "data_admissao": "2023-08-01",
+      "contato_rh": "joao.silva@techsolutions.com",
+      "data_desligamento": null,
+      "created_at": "2023-08-01T00:00:00.000Z",
+      "updated_at": "2023-08-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "nome": "Ana Paula",
+      "email": "ana.paula@email.com",
+      "tipo_usuario": "aluno",
+      "telefone": "(11) 99999-2345",
+      "cpf": "23456789012",
+      "cep": "02345-678",
+      "cidade": "Rio de Janeiro",
+      "estado": "RJ",
+      "bairro": "Centro",
+      "pais": "Brasil",
+      "numero_endereco": "456",
+      "complemento": "Sala 202",
+      "codigo": "STU002",
+      "responsavel": "Maria Santos",
+      "observacao": "Excelente desempenho técnico",
+      "empresa_id": 2,
+      "funcao_id": 2,
+      "data_admissao": "2023-08-01",
+      "contato_rh": "maria.santos@datasystems.com",
+      "data_desligamento": null,
+      "created_at": "2023-08-01T00:00:00.000Z",
+      "updated_at": "2023-08-01T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "nome": "Roberto Lima",
+      "email": "roberto.lima@email.com",
+      "tipo_usuario": "aluno",
+      "telefone": "(11) 99999-3456",
+      "cpf": "34567890123",
+      "cep": "03456-789",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "bairro": "Vila Mariana",
+      "pais": "Brasil",
+      "numero_endereco": "789",
+      "complemento": "Casa",
+      "codigo": "STU003",
+      "responsavel": "Pedro Oliveira",
+      "observacao": "Em processo de recolocação",
+      "empresa_id": 1,
+      "funcao_id": 3,
+      "data_admissao": "2023-08-01",
+      "contato_rh": "pedro.oliveira@techsolutions.com",
+      "data_desligamento": "2024-02-15",
+      "created_at": "2023-08-01T00:00:00.000Z",
+      "updated_at": "2024-02-15T00:00:00.000Z"
+    }
+  ],
+  "companies": [
+    {
+      "id": "1",
+      "razao_social": "Tech Solutions Ltda",
+      "cnpj": "12345678000199",
+      "cep": "01234-567",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "bairro": "Centro",
+      "pais": "Brasil",
+      "numero_endereco": "123",
+      "complemento": "Sala 1001",
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "razao_social": "Data Systems Corp",
+      "cnpj": "23456789000188",
+      "cep": "02345-678",
+      "cidade": "Rio de Janeiro",
+      "estado": "RJ",
+      "bairro": "Centro",
+      "pais": "Brasil",
+      "numero_endereco": "456",
+      "complemento": "Sala 2002",
+      "created_at": "2023-02-01T00:00:00.000Z",
+      "updated_at": "2023-02-01T00:00:00.000Z"
+    }
+  ],
+  "functions": [
+    {
+      "id": "1",
+      "codigo": "DEV-FRONT",
+      "nome_funcao": "Desenvolvedor Frontend",
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "codigo": "DEV-BACK",
+      "nome_funcao": "Desenvolvedor Backend",
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "codigo": "ANA-SIS",
+      "nome_funcao": "Analista de Sistemas",
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "4",
+      "codigo": "DES-UXUI",
+      "nome_funcao": "Designer UX/UI",
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    }
+  ],
+  "employees": [
+    {
+      "id": "1",
+      "nome": "Pedro Oliveira",
+      "email": "pedro.oliveira@techsolutions.com",
+      "tipo_usuario": "funcionario",
+      "telefone": "(11) 99999-4567",
+      "cpf": "45678901234",
+      "cep": "01234-567",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "bairro": "Centro",
+      "pais": "Brasil",
+      "numero_endereco": "100",
+      "complemento": "Sala 101",
+      "contato_empresarial": "pedro.oliveira@techsolutions.com",
+      "funcao_id": 3,
+      "created_at": "2020-03-15T00:00:00.000Z",
+      "updated_at": "2020-03-15T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "nome": "Juliana Costa",
+      "email": "juliana.costa@datasystems.com",
+      "tipo_usuario": "funcionario",
+      "telefone": "(21) 99999-5678",
+      "cpf": "56789012345",
+      "cep": "02345-678",
+      "cidade": "Rio de Janeiro",
+      "estado": "RJ",
+      "bairro": "Centro",
+      "pais": "Brasil",
+      "numero_endereco": "200",
+      "complemento": "Sala 201",
+      "contato_empresarial": "juliana.costa@datasystems.com",
+      "funcao_id": 2,
+      "created_at": "2021-01-10T00:00:00.000Z",
+      "updated_at": "2021-01-10T00:00:00.000Z"
+    }
+  ],
+  "questionnaires": [
+    {
+      "id": "1",
+      "nome": "Avaliação de Satisfação com o Estágio",
+      "questionario_json": "{\"title\":\"Avaliação de Satisfação com o Estágio\",\"fields\":[{\"id\":\"satisfaction\",\"type\":\"rating\",\"label\":\"Como você avalia sua experiência geral no estágio?\",\"required\":true,\"options\":[\"1 - Muito ruim\",\"2 - Ruim\",\"3 - Regular\",\"4 - Bom\",\"5 - Excelente\"]},{\"id\":\"expectations\",\"type\":\"radio\",\"label\":\"As atividades desenvolvidas correspondem às suas expectativas?\",\"required\":true,\"options\":[\"Sim, totalmente\",\"Parcialmente\",\"Não, de forma alguma\"]},{\"id\":\"learnings\",\"type\":\"textarea\",\"label\":\"Quais conhecimentos você adquiriu durante o estágio?\",\"required\":false}]}",
+      "created_at": "2024-01-01T00:00:00.000Z",
+      "updated_at": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "nome": "Feedback do Supervisor",
+      "questionario_json": "{\"title\":\"Feedback do Supervisor\",\"fields\":[{\"id\":\"performance\",\"type\":\"rating\",\"label\":\"Como você avalia o desempenho do estagiário?\",\"required\":true,\"options\":[\"1 - Insatisfatório\",\"2 - Abaixo do esperado\",\"3 - Satisfatório\",\"4 - Acima do esperado\",\"5 - Excelente\"]},{\"id\":\"comments\",\"type\":\"textarea\",\"label\":\"Comentários sobre o desempenho\",\"required\":false}]}",
+      "created_at": "2024-01-15T00:00:00.000Z",
+      "updated_at": "2024-01-15T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "nome": "Avaliação de Competências Técnicas",
+      "questionario_json": "{\"title\":\"Avaliação de Competências Técnicas\",\"fields\":[{\"id\":\"technologies\",\"type\":\"checkbox\",\"label\":\"Quais tecnologias você aprendeu?\",\"required\":true,\"options\":[\"React\",\"Node.js\",\"Python\",\"Java\",\"SQL\",\"Git\",\"Docker\"]},{\"id\":\"skill_level\",\"type\":\"radio\",\"label\":\"Nível de proficiência adquirido\",\"required\":true,\"options\":[\"Básico\",\"Intermediário\",\"Avançado\"]}]}",
+      "created_at": "2024-02-01T00:00:00.000Z",
+      "updated_at": "2024-02-01T00:00:00.000Z"
+    }
+  ],
+  "questions": [
+    {
+      "id": "1",
+      "questionario_id": 1,
+      "tipo_pergunta": "resposta_curta",
+      "texto_pergunta": "Como você avalia sua experiência geral no estágio?",
+      "created_at": "2024-01-01T00:00:00.000Z",
+      "updated_at": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "questionario_id": 1,
+      "tipo_pergunta": "combobox",
+      "texto_pergunta": "As atividades desenvolvidas correspondem às suas expectativas?",
+      "created_at": "2024-01-01T00:00:00.000Z",
+      "updated_at": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "questionario_id": 1,
+      "tipo_pergunta": "resposta_curta",
+      "texto_pergunta": "Quais conhecimentos você adquiriu durante o estágio?",
+      "created_at": "2024-01-01T00:00:00.000Z",
+      "updated_at": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "4",
+      "questionario_id": 2,
+      "tipo_pergunta": "resposta_curta",
+      "texto_pergunta": "Como você avalia o desempenho do estagiário?",
+      "created_at": "2024-01-15T00:00:00.000Z",
+      "updated_at": "2024-01-15T00:00:00.000Z"
+    },
+    {
+      "id": "5",
+      "questionario_id": 3,
+      "tipo_pergunta": "checkbox",
+      "texto_pergunta": "Quais tecnologias você aprendeu?",
+      "created_at": "2024-02-01T00:00:00.000Z",
+      "updated_at": "2024-02-01T00:00:00.000Z"
+    }
+  ],
+  "answers": [
+    {
+      "id": "1",
+      "pergunta_id": 1,
+      "aluno_id": 1,
+      "resposta_texto": "5 - Excelente experiência",
+      "data_entrada": "2024-03-01",
+      "data_avaliacao": "2024-03-01",
+      "professor_id": 1,
+      "created_at": "2024-03-01T10:00:00.000Z",
+      "updated_at": "2024-03-01T10:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "pergunta_id": 2,
+      "aluno_id": 1,
+      "resposta_opcao": "Sim, totalmente",
+      "data_entrada": "2024-03-01",
+      "data_avaliacao": "2024-03-01",
+      "professor_id": 1,
+      "created_at": "2024-03-01T10:00:00.000Z",
+      "updated_at": "2024-03-01T10:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "pergunta_id": 3,
+      "aluno_id": 1,
+      "resposta_texto": "Aprendi muito sobre desenvolvimento web, especialmente React e Node.js",
+      "data_entrada": "2024-03-01",
+      "data_avaliacao": "2024-03-01",
+      "professor_id": 1,
+      "created_at": "2024-03-01T10:00:00.000Z",
+      "updated_at": "2024-03-01T10:00:00.000Z"
+    }
+  ],
+  "questionnaire-responses": [
+    {
+      "id": "1",
+      "questionario_id": 1,
+      "aluno_id": 1,
+      "respostas_json": "{\"satisfaction\":\"5\",\"expectations\":\"Sim, totalmente\",\"learnings\":\"Aprendi muito sobre desenvolvimento web, especialmente React e Node.js\"}",
+      "data_envio": "2024-03-01T10:15:00.000Z",
+      "aluno": {
+        "id": 1,
+        "nome": "Carlos Eduardo",
+        "email": "carlos.eduardo@email.com"
+      },
+      "questionario": {
+        "id": 1,
+        "nome": "Avaliação de Satisfação com o Estágio",
+        "questionario_json": "{\"title\":\"Avaliação de Satisfação com o Estágio\",\"fields\":[{\"id\":\"satisfaction\",\"type\":\"rating\",\"label\":\"Como você avalia sua experiência geral no estágio?\",\"required\":true,\"options\":[\"1 - Muito ruim\",\"2 - Ruim\",\"3 - Regular\",\"4 - Bom\",\"5 - Excelente\"]},{\"id\":\"expectations\",\"type\":\"radio\",\"label\":\"As atividades desenvolvidas correspondem às suas expectativas?\",\"required\":true,\"options\":[\"Sim, totalmente\",\"Parcialmente\",\"Não, de forma alguma\"]},{\"id\":\"learnings\",\"type\":\"textarea\",\"label\":\"Quais conhecimentos você adquiriu durante o estágio?\",\"required\":false}]}"
+      },
+      "created_at": "2024-03-01T10:00:00.000Z",
+      "updated_at": "2024-03-01T10:15:00.000Z"
+    },
+    {
+      "id": "2",
+      "questionario_id": 2,
+      "aluno_id": 1,
+      "respostas_json": "{}",
+      "data_envio": null,
+      "aluno": {
+        "id": 1,
+        "nome": "Carlos Eduardo",
+        "email": "carlos.eduardo@email.com"
+      },
+      "questionario": {
+        "id": 2,
+        "nome": "Feedback do Supervisor",
+        "questionario_json": "{\"title\":\"Feedback do Supervisor\",\"fields\":[{\"id\":\"performance\",\"type\":\"rating\",\"label\":\"Como você avalia o desempenho do estagiário?\",\"required\":true,\"options\":[\"1 - Insatisfatório\",\"2 - Abaixo do esperado\",\"3 - Satisfatório\",\"4 - Acima do esperado\",\"5 - Excelente\"]},{\"id\":\"comments\",\"type\":\"textarea\",\"label\":\"Comentários sobre o desempenho\",\"required\":false}]}"
+      },
+      "created_at": "2024-03-15T14:30:00.000Z",
+      "updated_at": "2024-03-15T14:30:00.000Z"
+    },
+    {
+      "id": "3",
+      "questionario_id": 1,
+      "aluno_id": 2,
+      "respostas_json": "{\"satisfaction\":\"4\",\"expectations\":\"Sim, totalmente\",\"learnings\":\"Desenvolvimento de aplicações web e trabalho em equipe\"}",
+      "data_envio": "2024-03-10T09:20:00.000Z",
+      "aluno": {
+        "id": 2,
+        "nome": "Ana Paula",
+        "email": "ana.paula@email.com"
+      },
+      "questionario": {
+        "id": 1,
+        "nome": "Avaliação de Satisfação com o Estágio",
+        "questionario_json": "{\"title\":\"Avaliação de Satisfação com o Estágio\",\"fields\":[{\"id\":\"satisfaction\",\"type\":\"rating\",\"label\":\"Como você avalia sua experiência geral no estágio?\",\"required\":true,\"options\":[\"1 - Muito ruim\",\"2 - Ruim\",\"3 - Regular\",\"4 - Bom\",\"5 - Excelente\"]},{\"id\":\"expectations\",\"type\":\"radio\",\"label\":\"As atividades desenvolvidas correspondem às suas expectativas?\",\"required\":true,\"options\":[\"Sim, totalmente\",\"Parcialmente\",\"Não, de forma alguma\"]},{\"id\":\"learnings\",\"type\":\"textarea\",\"label\":\"Quais conhecimentos você adquiriu durante o estágio?\",\"required\":false}]}"
+      },
+      "created_at": "2024-03-10T09:00:00.000Z",
+      "updated_at": "2024-03-10T09:20:00.000Z"
+    }
+  ],
+  "experience-evaluations": [
+    {
+      "id": "1",
+      "aluno_id": 1,
+      "ingresso": "2023-08-01",
+      "avaliacoes": "Excelente desempenho, muito dedicado e aprende rapidamente. Demonstrou grandes habilidades técnicas e comportamentais.",
+      "resultado_final": "Aprovado com distinção",
+      "created_at": "2024-03-01T00:00:00.000Z",
+      "updated_at": "2024-03-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "aluno_id": 2,
+      "ingresso": "2023-08-01",
+      "avaliacoes": "Bom desenvolvimento técnico, boa integração com a equipe. Demonstrou competência nas tarefas atribuídas.",
+      "resultado_final": "Aprovado",
+      "created_at": "2024-03-10T00:00:00.000Z",
+      "updated_at": "2024-03-10T00:00:00.000Z"
+    }
+  ],
+  "job-market-follow-ups": [
+    {
+      "id": "1",
+      "nome": "Carlos Eduardo",
+      "data_admissao": "2024-04-01",
+      "empresa_id": 1,
+      "responsavel_rh": "João Silva",
+      "data_visita": "2024-04-01",
+      "contato_com": "Recrutador",
+      "parecer_geral": "Contratação efetiva após o término do estágio. Excelente adaptação e desempenho.",
+      "created_at": "2024-04-01T00:00:00.000Z",
+      "updated_at": "2024-04-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "nome": "Ana Paula",
+      "data_admissao": "2024-04-15",
+      "empresa_id": 2,
+      "responsavel_rh": "Maria Santos",
+      "data_visita": "2024-04-15",
+      "contato_com": "Coordenador de RH",
+      "parecer_geral": "Continua procurando emprego na área de tecnologia. Demonstra interesse e dedicação.",
+      "created_at": "2024-04-15T00:00:00.000Z",
+      "updated_at": "2024-04-15T00:00:00.000Z"
+    }
+  ],
+  "smtp-config": [
+    {
+      "id": "1",
+      "host": "smtp.gmail.com",
+      "port": 587,
+      "secure": false,
+      "user": "noreply@empresa.com",
+      "password": "password123",
+      "from_email": "noreply@empresa.com",
+      "from_name": "Sistema PE4",
+      "status": "configured",
+      "updated_at": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "auth": [
+    {
+      "id": "1",
+      "email": "admin@empresa.com",
+      "password": "Admin123@",
+      "user": {
+        "id": 1,
+        "nome": "Administrador",
+        "email": "admin@empresa.com",
+        "tipo_usuario": "admin"
+      },
+      "token": "mock-jwt-token-admin"
+    },
+    {
+      "id": "2",
+      "email": "joao@empresa.com",
+      "password": "joao123",
+      "user": {
+        "id": 2,
+        "nome": "João Silva",
+        "email": "joao@empresa.com",
+        "tipo_usuario": "funcionario"
+      },
+      "token": "mock-jwt-token-joao"
+    },
+    {
+      "id": "3",
+      "email": "maria@empresa.com",
+      "password": "maria123",
+      "user": {
+        "id": 3,
+        "nome": "Maria Santos",
+        "email": "maria@empresa.com",
+        "tipo_usuario": "aluno"
+      },
+      "token": "mock-jwt-token-maria"
+    }
+  ],
+  "forgot-password": [
+    {
+      "email": "admin@empresa.com",
+      "token": "reset-token-123",
+      "expires_at": "2024-12-31T23:59:59.000Z",
+      "used": false,
+      "id": "aace"
+    }
+  ],
+  "reset-password": [
+    {
+      "token": "reset-token-123",
+      "new_password": "newpassword123",
+      "confirmed": true,
+      "id": "9acf"
+    }
+  ],
+  "smtp-config-test": [
+    {
+      "success": true,
+      "message": "Conexão SMTP testada com sucesso",
+      "id": "bc4b"
+    }
+  ]
+}
