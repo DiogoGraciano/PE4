@@ -2,24 +2,19 @@ import React, { useState, useEffect } from 'react';
 import {
   FileText,
   Users,
-  Calendar,
   Eye,
   Search,
-  Filter,
   BarChart3,
   ChevronDown,
   ChevronRight,
-  X,
   User,
   Clock
 } from 'lucide-react';
 import apiService from '../../services/api';
+import QuestionnaireResponseModal from '../../components/QuestionnaireResponseModal';
 import type {
   Questionnaire,
   QuestionnaireResponse,
-  QuestionnaireResponseData,
-  QuestionField,
-  Student
 } from '../../types';
 
 const QuestionnaireResponses: React.FC = () => {
@@ -29,10 +24,8 @@ const QuestionnaireResponses: React.FC = () => {
   const [filteredResponses, setFilteredResponses] = useState<QuestionnaireResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [selectedResponse, setSelectedResponse] = useState<QuestionnaireResponse | null>(null);
-  const [responseData, setResponseData] = useState<QuestionnaireResponseData>({});
-  const [questionnaireFields, setQuestionnaireFields] = useState<QuestionField[]>([]);
   const [expandedStats, setExpandedStats] = useState(false);
 
   useEffect(() => {
@@ -90,44 +83,9 @@ const QuestionnaireResponses: React.FC = () => {
     setFilteredResponses(filtered);
   };
 
-  const handleViewResponse = async (response: QuestionnaireResponse) => {
+  const handleViewResponse = (response: QuestionnaireResponse) => {
     setSelectedResponse(response);
-
-    try {
-      // Parse response data
-      const data: QuestionnaireResponseData = JSON.parse(response.respostas_json);
-      setResponseData(data);
-
-      // Parse questionnaire fields
-      if (response.questionario) {
-        const fields: QuestionField[] = JSON.parse(response.questionario.questionario_json);
-        setQuestionnaireFields(fields);
-      }
-
-      setShowDetailModal(true);
-    } catch (error) {
-      console.error('Erro ao processar resposta:', error);
-    }
-  };
-
-  const getFieldValue = (fieldId: string) => {
-    const value = responseData[fieldId];
-    if (value === undefined || value === null) return 'Não respondido';
-
-    if (Array.isArray(value)) {
-      return value.join(', ');
-    }
-
-    if (typeof value === 'boolean') {
-      return value ? 'Sim' : 'Não';
-    }
-
-    return String(value);
-  };
-
-  const getFieldLabel = (fieldId: string) => {
-    const field = questionnaireFields.find(f => f.id === fieldId);
-    return field?.label || fieldId;
+    setShowModal(true);
   };
 
   const calculateStats = () => {
@@ -338,94 +296,16 @@ const QuestionnaireResponses: React.FC = () => {
         </>
       )}
 
-      {/* Modal de visualização detalhada */}
-      {showDetailModal && selectedResponse && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">Resposta do Questionário</h2>
-                <p className="text-sm text-gray-600 mt-1">
-                  {selectedResponse.aluno?.nome} - {selectedQuestionnaire?.nome}
-                </p>
-              </div>
-              <button
-                onClick={() => setShowDetailModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {/* Informações do aluno */}
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-lg font-medium text-gray-900 mb-3">Informações do Aluno</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Nome</p>
-                    <p className="text-sm text-gray-900">{selectedResponse.aluno?.nome}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">E-mail</p>
-                    <p className="text-sm text-gray-900">{selectedResponse.aluno?.email}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Data de Envio</p>
-                    <p className="text-sm text-gray-900">
-                      {new Date(selectedResponse.data_envio).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Tipo de Usuário</p>
-                    <p className="text-sm text-gray-900 capitalize">{selectedResponse.aluno?.tipo_usuario}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Respostas */}
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Respostas</h3>
-                <div className="space-y-4">
-                  {(questionnaireFields || []).map((field) => (
-                    <div key={field.id} className="border border-gray-200 rounded-lg p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            {field.label}
-                            {field.required && <span className="text-red-500 ml-1">*</span>}
-                          </label>
-                          <div className="text-sm text-gray-900 bg-gray-50 p-3 rounded-md">
-                            {getFieldValue(field.id)}
-                          </div>
-                        </div>
-                        <div className="ml-4 text-xs text-gray-500">
-                          {field.type}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end mt-6">
-              <button
-                onClick={() => setShowDetailModal(false)}
-                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
-              >
-                Fechar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal de visualização */}
+      <QuestionnaireResponseModal
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false);
+          setSelectedResponse(null);
+        }}
+        response={selectedResponse}
+        questionnaire={selectedQuestionnaire}
+      />
     </div>
   );
 };

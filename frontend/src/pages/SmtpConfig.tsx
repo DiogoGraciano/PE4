@@ -12,6 +12,50 @@ interface SmtpConfig {
   from_name: string;
 }
 
+interface SmtpConfigBackend {
+  host: string;
+  port: number;
+  secure: boolean;
+  user: string;
+  password: string;
+  from: string;
+}
+
+// Função para converter do formato backend (from: "Nome <email>" ou "email") para frontend
+function parseFromField(from: string): { from_email: string; from_name: string } {
+  if (!from) {
+    return { from_email: '', from_name: '' };
+  }
+
+  // Verifica se está no formato "Nome <email>"
+  const match = from.match(/^(.+?)\s*<(.+?)>$/);
+  if (match) {
+    return {
+      from_name: match[1].trim(),
+      from_email: match[2].trim(),
+    };
+  }
+
+  // Se não tiver nome, retorna apenas o email
+  return {
+    from_email: from.trim(),
+    from_name: '',
+  };
+}
+
+// Função para converter do formato frontend para backend
+function formatFromField(from_email: string, from_name: string): string {
+  if (!from_email) {
+    return '';
+  }
+
+  if (from_name && from_name.trim()) {
+    return `${from_name.trim()} <${from_email.trim()}>`;
+  }
+
+  return from_email.trim();
+}
+
 const SmtpConfig: React.FC = () => {
   const [config, setConfig] = useState<SmtpConfig>({
     host: '',
@@ -37,7 +81,18 @@ const SmtpConfig: React.FC = () => {
       setIsLoading(true);
       const response = await apiService.getSmtpConfig();
       if (response.success && response.data) {
-        setConfig(response.data);
+        const backendData = response.data as SmtpConfigBackend;
+        // Converte o campo 'from' do backend para 'from_email' e 'from_name'
+        const { from_email, from_name } = parseFromField(backendData.from || '');
+        setConfig({
+          host: backendData.host || '',
+          port: backendData.port || 587,
+          secure: backendData.secure ?? false,
+          user: backendData.user || '',
+          password: '', // Não carrega a senha por segurança
+          from_email,
+          from_name,
+        });
       }
     } catch (error: any) {
       console.error('Erro ao carregar configuração SMTP:', error);
@@ -100,7 +155,17 @@ const SmtpConfig: React.FC = () => {
       setError('');
       setSuccess('');
 
-      await apiService.saveSmtpConfig(config);
+      // Converte do formato frontend para o formato backend
+      const backendConfig: SmtpConfigBackend = {
+        host: config.host,
+        port: config.port,
+        secure: config.secure,
+        user: config.user,
+        password: config.password,
+        from: formatFromField(config.from_email, config.from_name),
+      };
+
+      await apiService.saveSmtpConfig(backendConfig);
       setSuccess('Configuração SMTP salva com sucesso!');
     } catch (error: any) {
       setError(error.response?.data?.message || 'Erro ao salvar configuração SMTP.');
@@ -117,7 +182,18 @@ const SmtpConfig: React.FC = () => {
     try {
       setIsLoading(true);
       setError('');
-      await apiService.testSmtpConnection(config);
+      
+      // Converte do formato frontend para o formato backend
+      const backendConfig: SmtpConfigBackend = {
+        host: config.host,
+        port: config.port,
+        secure: config.secure,
+        user: config.user,
+        password: config.password,
+        from: formatFromField(config.from_email, config.from_name),
+      };
+
+      await apiService.testSmtpConnection(backendConfig);
       setSuccess('Conexão SMTP testada com sucesso!');
     } catch (error: any) {
       setError(error.response?.data?.message || 'Erro ao testar conexão SMTP.');
@@ -244,6 +320,9 @@ const SmtpConfig: React.FC = () => {
                   placeholder="Sua senha de aplicativo"
                 />
               </div>
+              <p className="mt-1 text-xs text-gray-500">
+                A senha precisa ser informada novamente ao atualizar a configuração
+              </p>
             </div>
           </div>
 

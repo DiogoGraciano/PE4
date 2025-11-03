@@ -4,8 +4,10 @@ import {
     Edit,
     Trash2,
     User,
-    DownloadCloud
+    DownloadCloud,
+    FileText
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/api';
 import type { Student, Company, Function } from '../../types';
 import DataTable, { type Column, type ActionButton } from '../../components/DataTable';
@@ -14,6 +16,7 @@ import Modal from '../../components/Modal';
 import { StudentForm, type StudentFormData } from '../../components/forms';
 
 const Students: React.FC = () => {
+    const navigate = useNavigate();
     const [students, setStudents] = useState<Student[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [functions, setFunctions] = useState<Function[]>([]);
@@ -71,10 +74,85 @@ const Students: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            if (editingStudent) {
-                await apiService.updateStudent(editingStudent.id, formData);
+            // Preparar dados com todos os campos aceitos pelo DTO
+            const studentData: any = {
+                codigo: formData.codigo,
+                responsavel: formData.responsavel,
+            };
+
+            // Adicionar campos opcionais apenas se tiverem valor
+            if (formData.nome && formData.nome.trim()) {
+                studentData.nome = formData.nome;
+            }
+
+            if (formData.email && formData.email.trim()) {
+                studentData.email = formData.email;
+            }
+
+            if (formData.telefone && formData.telefone.trim()) {
+                studentData.telefone = formData.telefone;
+            }
+
+            if (formData.cpf && formData.cpf.trim()) {
+                studentData.cpf = formData.cpf;
+            }
+
+            if (formData.cep && formData.cep.trim()) {
+                studentData.cep = formData.cep;
+            }
+
+            if (formData.cidade && formData.cidade.trim()) {
+                studentData.cidade = formData.cidade;
+            }
+
+            if (formData.estado && formData.estado.trim()) {
+                studentData.estado = formData.estado;
+            }
+
+            if (formData.bairro && formData.bairro.trim()) {
+                studentData.bairro = formData.bairro;
+            }
+
+            if (formData.pais && formData.pais.trim()) {
+                studentData.pais = formData.pais;
+            }
+
+            if (formData.numero_endereco && formData.numero_endereco.trim()) {
+                studentData.numero_endereco = formData.numero_endereco;
+            }
+
+            if (formData.complemento && formData.complemento.trim()) {
+                studentData.complemento = formData.complemento;
+            }
+
+            if (formData.observacao && formData.observacao.trim()) {
+                studentData.observacao = formData.observacao;
+            }
+
+            if (formData.empresa_id) {
+                studentData.empresa_id = parseInt(formData.empresa_id, 10);
+            }
+
+            if (formData.funcao_id) {
+                studentData.funcao_id = parseInt(formData.funcao_id, 10);
+            }
+
+            if (formData.data_admissao) {
+                studentData.data_admissao = formData.data_admissao;
+            }
+
+            if (formData.contato_rh && formData.contato_rh.trim()) {
+                studentData.contato_rh = formData.contato_rh;
+            }
+
+            if (formData.data_desligamento) {
+                studentData.data_desligamento = formData.data_desligamento;
+            }
+
+            if (editingStudent && editingStudent.id) {
+                await apiService.updateStudent(editingStudent.id, studentData);
             } else {
-                await apiService.createStudent(formData);
+                await apiService.createStudent(studentData);
             }
             setShowModal(false);
             setEditingStudent(null);
@@ -85,30 +163,83 @@ const Students: React.FC = () => {
         }
     };
 
-    const handleEdit = (student: Student) => {
-        setEditingStudent(student);
-        setFormData({
-            nome: student.nome,
-            email: student.email,
-            telefone: student.telefone,
-            cpf: student.cpf,
-            cep: student.cep || '',
-            cidade: student.cidade,
-            estado: student.estado,
-            bairro: student.bairro,
-            pais: student.pais,
-            numero_endereco: student.numero_endereco,
-            complemento: student.complemento || '',
-            codigo: student.codigo,
-            responsavel: student.responsavel,
-            observacao: student.observacao || '',
-            empresa_id: student.empresa_id?.toString() || '',
-            funcao_id: student.funcao_id?.toString() || '',
-            data_admissao: student.data_admissao || '',
-            contato_rh: student.contato_rh || '',
-            data_desligamento: student.data_desligamento || ''
-        });
-        setShowModal(true);
+    const formatDateForInput = (date: string | Date | null | undefined): string => {
+        if (!date) return '';
+        if (typeof date === 'string') {
+            // Se já é uma string, retornar apenas a parte da data (YYYY-MM-DD)
+            return date.split('T')[0];
+        }
+        if (date instanceof Date) {
+            // Se é um objeto Date, formatar para YYYY-MM-DD
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        return '';
+    };
+
+    const handleEdit = async (student: Student) => {
+        if (!student.id) {
+            console.error('Aluno sem ID para edição');
+            return;
+        }
+
+        try {
+            // Buscar os dados completos do aluno para garantir que temos todos os campos atualizados
+            const studentRes = await apiService.getStudent(student.id);
+            const fullStudent = studentRes.data || student;
+            
+            setEditingStudent(fullStudent);
+            setFormData({
+                nome: fullStudent.nome || '',
+                email: fullStudent.email || '',
+                telefone: fullStudent.telefone || '',
+                cpf: fullStudent.cpf || '',
+                cep: fullStudent.cep || '',
+                cidade: fullStudent.cidade || '',
+                estado: fullStudent.estado || '',
+                bairro: fullStudent.bairro || '',
+                pais: fullStudent.pais || 'Brasil',
+                numero_endereco: fullStudent.numero_endereco || '',
+                complemento: fullStudent.complemento || '',
+                codigo: fullStudent.codigo || '',
+                responsavel: fullStudent.responsavel || '',
+                observacao: fullStudent.observacao || '',
+                empresa_id: fullStudent.empresa_id?.toString() || '',
+                funcao_id: fullStudent.funcao_id?.toString() || '',
+                data_admissao: formatDateForInput(fullStudent.data_admissao),
+                contato_rh: fullStudent.contato_rh || '',
+                data_desligamento: formatDateForInput(fullStudent.data_desligamento)
+            });
+            setShowModal(true);
+        } catch (error) {
+            console.error('Erro ao carregar dados do aluno:', error);
+            // Fallback: usar os dados do student passado
+            setEditingStudent(student);
+            setFormData({
+                nome: student.nome || '',
+                email: student.email || '',
+                telefone: student.telefone || '',
+                cpf: student.cpf || '',
+                cep: student.cep || '',
+                cidade: student.cidade || '',
+                estado: student.estado || '',
+                bairro: student.bairro || '',
+                pais: student.pais || 'Brasil',
+                numero_endereco: student.numero_endereco || '',
+                complemento: student.complemento || '',
+                codigo: student.codigo || '',
+                responsavel: student.responsavel || '',
+                observacao: student.observacao || '',
+                empresa_id: student.empresa_id?.toString() || '',
+                funcao_id: student.funcao_id?.toString() || '',
+                data_admissao: formatDateForInput(student.data_admissao),
+                contato_rh: student.contato_rh || '',
+                data_desligamento: formatDateForInput(student.data_desligamento)
+            });
+            setShowModal(true);
+        }
     };
 
     const handleDelete = async (id: number) => {
@@ -154,9 +285,12 @@ const Students: React.FC = () => {
 
 
     const filteredStudents = students.filter(student => {
-        const matchesSearch = student.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.codigo.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = 
+            (student.nome && student.nome.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (student.email && student.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            student.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            student.responsavel.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (student.observacao && student.observacao.toLowerCase().includes(searchTerm.toLowerCase()));
         const matchesCompany = !selectedCompany || student.empresa_id?.toString() === selectedCompany;
         const matchesFunction = !selectedFunction || student.funcao_id?.toString() === selectedFunction;
 
@@ -182,8 +316,8 @@ const Students: React.FC = () => {
                         <User className="w-5 h-5 text-blue-600" />
                     </div>
                     <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{student.nome}</div>
-                        <div className="text-sm text-gray-500">{student.email}</div>
+                        <div className="text-sm font-medium text-gray-900">{student.nome || student.codigo}</div>
+                        <div className="text-sm text-gray-500">{student.email || student.responsavel}</div>
                     </div>
                 </div>
             )
@@ -219,6 +353,16 @@ const Students: React.FC = () => {
     // Definição das ações da tabela
     const studentActions: ActionButton<Student>[] = [
         {
+            icon: <FileText className="w-4 h-4" />,
+            onClick: (student) => {
+                if (student.id) {
+                    navigate(`/alunos/${student.id}/respostas`);
+                }
+            },
+            className: "text-green-600 hover:text-green-900",
+            title: "Ver Respostas"
+        },
+        {
             icon: <Edit className="w-4 h-4" />,
             onClick: handleEdit,
             className: "text-blue-600 hover:text-blue-900",
@@ -226,7 +370,11 @@ const Students: React.FC = () => {
         },
         {
             icon: <Trash2 className="w-4 h-4" />,
-            onClick: (student) => handleDelete(student.id),
+            onClick: (student) => {
+                if (student.id) {
+                    handleDelete(student.id);
+                }
+            },
             className: "text-red-600 hover:text-red-900",
             title: "Excluir"
         }
@@ -254,7 +402,7 @@ const Students: React.FC = () => {
             <SearchFilter
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
-                searchPlaceholder="Buscar por nome, email ou código..."
+                searchPlaceholder="Buscar por nome, email, código, responsável ou observação..."
                 filters={[
                     {
                         label: "Todas as empresas",
@@ -304,7 +452,7 @@ const Students: React.FC = () => {
                 </div>
                 
                 <DataTable
-                    data={filteredStudents}
+                    data={filteredStudents.filter(s => s.id !== undefined) as (Student & { id: number })[]}
                     columns={studentColumns}
                     actions={studentActions}
                     emptyState={{

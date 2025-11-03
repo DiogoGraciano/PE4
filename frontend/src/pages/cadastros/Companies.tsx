@@ -218,10 +218,19 @@ const Companies: React.FC = () => {
     return cleanCNPJ.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
   };
 
-  const filteredCompanies = (companies || []).filter(company =>
-    company.razao_social.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    company.cnpj.replace(/\D/g, '').includes(searchTerm.replace(/\D/g, ''))
-  );
+  const filteredCompanies = (companies || []).filter(company => {
+    if (!searchTerm.trim()) {
+      return true;
+    }
+    
+    const searchLower = searchTerm.toLowerCase().trim();
+    const searchNumbers = searchTerm.replace(/\D/g, '');
+    
+    const razaoSocial = (company.razao_social || '').toLowerCase();
+    const cnpj = (company.cnpj || '').replace(/\D/g, '');
+    
+    return razaoSocial.includes(searchLower) || cnpj.includes(searchNumbers);
+  });
 
   // Definição das colunas da tabela
   const companyColumns: Column<Company>[] = [

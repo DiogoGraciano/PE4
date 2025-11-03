@@ -1,22 +1,16 @@
-export interface User {
-  id: number;
-  nome: string;
-  email: string;
-  tipo_usuario: 'admin' | 'funcionario' | 'aluno';
-  telefone: string;
-  cpf: string;
-  cep: string;
-  cidade: string;
-  estado: string;
-  bairro: string;
-  pais: string;
-  numero_endereco: string;
+export interface Student {
+  id?: number;
+  nome?: string;
+  email?: string;
+  telefone?: string;
+  cpf?: string;
+  cep?: string;
+  cidade?: string;
+  estado?: string;
+  bairro?: string;
+  pais?: string;
+  numero_endereco?: string;
   complemento?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Student extends User {
   codigo: string;
   responsavel: string;
   observacao?: string;
@@ -25,13 +19,26 @@ export interface Student extends User {
   data_admissao?: string;
   contato_rh?: string;
   data_desligamento?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export interface Employee extends User {
+export interface Employee {
+  nome: string;
+  email: string;
+  telefone: string;
+  cpf: string;
+  cep: string;
+  cidade: string;
+  estado: string;
+  bairro: string;
+  pais: string;
+  numero_endereco: string;
+  complemento: string;
   contato_empresarial: string;
-  funcao_id: number;
-  senha?: string;
-  confirmacao_senha?: string;
+  funcao_id: string;
+  senha: string;
+  confirmacao_senha: string;
 }
 
 export interface Company {
@@ -158,7 +165,7 @@ export interface LoginCredentials {
 }
 
 export interface AuthResponse {
-  user: User;
+  user: Employee;
   token: string;
 }
 

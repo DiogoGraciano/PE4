@@ -59,30 +59,14 @@ class ApiService {
     localStorage.removeItem('user');
   }
 
-  // Métodos para usuários
-  async getUsers(): Promise<ApiResponse<any[]>> {
-    const response = await this.api.get<ApiResponse<any[]>>('/users');
-    return response.data;
-  }
-
-  async createUser(userData: any): Promise<ApiResponse<any>> {
-    const response = await this.api.post<ApiResponse<any>>('/users', userData);
-    return response.data;
-  }
-
-  async updateUser(id: number, userData: any): Promise<ApiResponse<any>> {
-    const response = await this.api.put<ApiResponse<any>>(`/users/${id}`, userData);
-    return response.data;
-  }
-
-  async deleteUser(id: number): Promise<ApiResponse<void>> {
-    const response = await this.api.delete<ApiResponse<void>>(`/users/${id}`);
-    return response.data;
-  }
-
   // Métodos para alunos
   async getStudents(): Promise<ApiResponse<any[]>> {
     const response = await this.api.get<ApiResponse<any[]>>('/students');
+    return response.data;
+  }
+
+  async getStudent(id: number): Promise<ApiResponse<any>> {
+    const response = await this.api.get<ApiResponse<any>>(`/students/${id}`);
     return response.data;
   }
 
@@ -223,48 +207,6 @@ class ApiService {
 
   async createQuestionnaireResponse(responseData: any): Promise<ApiResponse<any>> {
     const response = await this.api.post<ApiResponse<any>>('/questionnaire-responses', responseData);
-    return response.data;
-  }
-
-  // Métodos para avaliações de experiência
-  async getExperienceEvaluations(): Promise<ApiResponse<any[]>> {
-    const response = await this.api.get<ApiResponse<any[]>>('/experience-evaluations');
-    return response.data;
-  }
-
-  async createExperienceEvaluation(evaluationData: any): Promise<ApiResponse<any>> {
-    const response = await this.api.post<ApiResponse<any>>('/experience-evaluations', evaluationData);
-    return response.data;
-  }
-
-  async updateExperienceEvaluation(id: number, evaluationData: any): Promise<ApiResponse<any>> {
-    const response = await this.api.put<ApiResponse<any>>(`/experience-evaluations/${id}`, evaluationData);
-    return response.data;
-  }
-
-  async deleteExperienceEvaluation(id: number): Promise<ApiResponse<void>> {
-    const response = await this.api.delete<ApiResponse<void>>(`/experience-evaluations/${id}`);
-    return response.data;
-  }
-
-  // Métodos para acompanhamento do mercado de trabalho
-  async getJobMarketFollowUps(): Promise<ApiResponse<any[]>> {
-    const response = await this.api.get<ApiResponse<any[]>>('/job-market-follow-ups');
-    return response.data;
-  }
-
-  async createJobMarketFollowUp(followUpData: any): Promise<ApiResponse<any>> {
-    const response = await this.api.post<ApiResponse<any>>('/job-market-follow-ups', followUpData);
-    return response.data;
-  }
-
-  async updateJobMarketFollowUp(id: number, followUpData: any): Promise<ApiResponse<any>> {
-    const response = await this.api.put<ApiResponse<any>>(`/job-market-follow-ups/${id}`, followUpData);
-    return response.data;
-  }
-
-  async deleteJobMarketFollowUp(id: number): Promise<ApiResponse<void>> {
-    const response = await this.api.delete<ApiResponse<void>>(`/job-market-follow-ups/${id}`);
     return response.data;
   }
 

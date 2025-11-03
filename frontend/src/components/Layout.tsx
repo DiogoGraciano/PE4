@@ -17,7 +17,8 @@ import {
   UserCog,
   ChevronDown,
   ChevronRight,
-  Settings
+  Settings,
+  MessageSquare
 } from 'lucide-react';
 
 const Layout: React.FC = () => {
@@ -48,8 +49,7 @@ const Layout: React.FC = () => {
       icon: <ClipboardList className="w-5 h-5" />,
       items: [
         { name: 'Respostas de Questionários', path: '/acompanhamentos/respostas-questionarios', icon: <FileText className="w-4 h-4" /> },
-        { name: 'Avaliação do Período de Experiência', path: '/acompanhamentos/avaliacoes', icon: <UserCheck className="w-4 h-4" /> },
-        { name: 'Acompanhamento do Mercado de Trabalho', path: '/acompanhamentos/mercado-trabalho', icon: <Building2 className="w-4 h-4" /> },
+        { name: 'Responder Questionários', path: '/questionarios/listar', icon: <MessageSquare className="w-4 h-4" /> }
       ]
     },
     {

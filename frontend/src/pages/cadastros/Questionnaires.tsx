@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, FileText, Save, Eye, Code, Palette } from 'lucide-react';
+import { Plus, Edit, Trash2, FileText, Save, Eye, Code, Palette, ClipboardList } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import apiService from '../../services/api';
 import type { Questionnaire, QuestionField } from '../../types';
 import DynamicForm from '../../components/DynamicForm';
@@ -9,6 +10,7 @@ import SearchFilter from '../../components/SearchFilter';
 import Modal from '../../components/Modal';
 
 const Questionnaires: React.FC = () => {
+  const navigate = useNavigate();
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -293,13 +295,22 @@ const Questionnaires: React.FC = () => {
         onSearchChange={setSearchTerm}
         searchPlaceholder="Buscar questionários..."
         actions={
-          <button
-            onClick={openNewModal}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Novo Questionário
-          </button>
+          <>
+            <button
+              onClick={() => navigate('/questionarios/listar')}
+              className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mr-2"
+            >
+              <ClipboardList className="w-4 h-4 mr-2" />
+              Responder Questionários
+            </button>
+            <button
+              onClick={openNewModal}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Novo Questionário
+            </button>
+          </>
         }
       />
 
