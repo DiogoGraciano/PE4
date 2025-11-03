@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, MoveUp, MoveDown, Eye, EyeOff, Settings } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Trash2, MoveUp, MoveDown, Eye, EyeOff } from 'lucide-react';
 import type { QuestionField } from '../types';
 
 interface FormBuilderProps {
@@ -43,7 +43,6 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
     const newFields = [...fields];
     newFields[index] = updatedField;
     onChange(newFields);
-    setEditingField(null);
   };
 
   const deleteField = (index: number) => {

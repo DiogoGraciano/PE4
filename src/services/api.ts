@@ -237,6 +237,16 @@ class ApiService {
     return response.data;
   }
 
+  async updateExperienceEvaluation(id: number, evaluationData: any): Promise<ApiResponse<any>> {
+    const response = await this.api.put<ApiResponse<any>>(`/experience-evaluations/${id}`, evaluationData);
+    return response.data;
+  }
+
+  async deleteExperienceEvaluation(id: number): Promise<ApiResponse<void>> {
+    const response = await this.api.delete<ApiResponse<void>>(`/experience-evaluations/${id}`);
+    return response.data;
+  }
+
   // Métodos para acompanhamento do mercado de trabalho
   async getJobMarketFollowUps(): Promise<ApiResponse<any[]>> {
     const response = await this.api.get<ApiResponse<any[]>>('/job-market-follow-ups');
@@ -245,6 +255,16 @@ class ApiService {
 
   async createJobMarketFollowUp(followUpData: any): Promise<ApiResponse<any>> {
     const response = await this.api.post<ApiResponse<any>>('/job-market-follow-ups', followUpData);
+    return response.data;
+  }
+
+  async updateJobMarketFollowUp(id: number, followUpData: any): Promise<ApiResponse<any>> {
+    const response = await this.api.put<ApiResponse<any>>(`/job-market-follow-ups/${id}`, followUpData);
+    return response.data;
+  }
+
+  async deleteJobMarketFollowUp(id: number): Promise<ApiResponse<void>> {
+    const response = await this.api.delete<ApiResponse<void>>(`/job-market-follow-ups/${id}`);
     return response.data;
   }
 

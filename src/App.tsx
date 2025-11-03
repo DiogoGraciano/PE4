@@ -11,6 +11,8 @@ import Functions from './pages/cadastros/Functions';
 import Employees from './pages/cadastros/Employees';
 import Questionnaires from './pages/cadastros/Questionnaires';
 import QuestionnaireResponses from './pages/acompanhamentos/QuestionnaireResponses';
+import JobMarketFollowUps from './pages/acompanhamentos/JobMarketFollowUps';
+import ExperienceEvaluations from './pages/acompanhamentos/ExperienceEvaluations';
 import Dashboard from './pages/Dashboard';
 
 // Páginas de Autenticação e Configuração
@@ -51,6 +53,8 @@ const AppContent: React.FC = () => {
         {/* Rotas de Acompanhamentos */}
         <Route path="acompanhamentos">
           <Route path="respostas-questionarios" element={<QuestionnaireResponses />} />
+          <Route path="avaliacoes" element={<JobMarketFollowUps/>} />
+          <Route path="mercado-trabalho" element={<ExperienceEvaluations/>} />
           {/* Adicionar outras rotas de acompanhamentos aqui */}
         </Route>
 
