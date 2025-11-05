@@ -1,0 +1,24 @@
+FROM node:24-alpine
+
+# Instala netcat-openbsd para verificação de conectividade
+RUN apk add --no-cache netcat-openbsd
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+# Copia e torna o entrypoint executável
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+EXPOSE 3000
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["npm", "run", "start:prod"]
+
