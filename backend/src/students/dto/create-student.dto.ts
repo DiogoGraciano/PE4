@@ -83,9 +83,10 @@ export class CreateStudentDto {
   @IsOptional()
   empresa_id?: number;
 
-  @IsInt()
+  @IsString()
   @IsOptional()
-  funcao_id?: number;
+  @MaxLength(255)
+  funcao?: string;
 
   @IsDateString()
   @IsOptional()

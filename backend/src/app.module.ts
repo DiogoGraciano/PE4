@@ -11,7 +11,6 @@ import { CompaniesModule } from './companies/companies.module';
 import { FunctionsModule } from './functions/functions.module';
 import { QuestionnairesModule } from './questionnaires/questionnaires.module';
 import { QuestionsModule } from './questions/questions.module';
-import { AnswersModule } from './answers/answers.module';
 import { QuestionnaireResponsesModule } from './questionnaire-responses/questionnaire-responses.module';
 import { SmtpConfigModule } from './smtp-config/smtp-config.module';
 
@@ -33,7 +32,6 @@ import { SmtpConfigModule } from './smtp-config/smtp-config.module';
     FunctionsModule,
     QuestionnairesModule,
     QuestionsModule,
-    AnswersModule,
     QuestionnaireResponsesModule,
     SmtpConfigModule,
   ],

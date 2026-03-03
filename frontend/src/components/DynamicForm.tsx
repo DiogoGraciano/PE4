@@ -57,13 +57,15 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     }
   };
 
+  const fieldsList = Array.isArray(fields) ? fields : [];
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const newErrors: {[key: string]: string} = {};
-    
+
     // Validar todos os campos
-    fields.forEach(field => {
+    fieldsList.forEach(field => {
       const error = validateField(field, formData[field.id]);
       if (error) {
         newErrors[field.id] = error;
@@ -213,7 +215,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {fields.map(renderField)}
+      {fieldsList.map(renderField)}
       
       {!readOnly && (
         <div className="flex justify-end gap-3">

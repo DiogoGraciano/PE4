@@ -24,11 +24,11 @@ if [ "$RUN_SEEDERS" = "true" ]; then
   # Tenta usar o código compilado primeiro, depois fallback para ts-node
   if [ -f "dist/database/run-seeders.js" ]; then
     echo "Usando código compilado..."
-    NODE_ENV=production npm run seed:prod 2>&1 || echo "Aviso: Seeders falharam ou já foram executados"
+    NODE_ENV=production bun run seed:prod 2>&1 || echo "Aviso: Seeders falharam ou já foram executados"
   else
     echo "Usando ts-node (pode levar alguns segundos para carregar)..."
     echo "Aguarde, isso pode demorar na primeira execução..."
-    NODE_ENV=development npm run seed 2>&1 || echo "Aviso: Seeders falharam ou já foram executados"
+    NODE_ENV=development bun run seed 2>&1 || echo "Aviso: Seeders falharam ou já foram executados"
   fi
   echo "Seeders finalizados."
 else

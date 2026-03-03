@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsInt,
 } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 
 export class CreateEmployeeDto {
   @IsString()
@@ -73,8 +74,10 @@ export class CreateEmployeeDto {
   @MaxLength(255)
   contato_empresarial?: string;
 
-  @IsInt()
   @IsOptional()
+  @Transform(({ value }) => (value === '' || value === null ? undefined : value))
+  @Type(() => Number)
+  @IsInt()
   funcao_id?: number;
 }
 

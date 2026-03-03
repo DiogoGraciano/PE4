@@ -8,7 +8,6 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Company } from '../../companies/entities/company.entity';
-import { Function as FunctionEntity } from '../../functions/entities/function.entity';
 
 @Entity('alunos')
 export class Student {
@@ -64,12 +63,8 @@ export class Student {
   @JoinColumn({ name: 'empresa_id' })
   empresa: Company | null;
 
-  @Column({ type: 'int', nullable: true })
-  funcao_id: number | null;
-
-  @ManyToOne(() => FunctionEntity, { nullable: true })
-  @JoinColumn({ name: 'funcao_id' })
-  funcao: FunctionEntity | null;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  funcao: string | null;
 
   @Column({ type: 'date', nullable: true })
   data_admissao: Date | null;

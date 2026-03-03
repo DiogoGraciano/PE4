@@ -2,6 +2,69 @@ import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { Questionnaire } from '../../questionnaires/entities/questionnaire.entity';
 
+// Formato compatível com o frontend: array de QuestionField (id, type, label, required?, placeholder?, options?, validation?)
+const questionnaireFields1 = [
+  {
+    id: 'desempenho_geral',
+    type: 'input' as const,
+    label: 'Como você avalia o desempenho geral do estagiário?',
+    required: true,
+    placeholder: 'Descreva brevemente',
+  },
+  {
+    id: 'habilidades',
+    type: 'checkbox' as const,
+    label: 'Quais habilidades o aluno desenvolveu?',
+    required: false,
+    options: ['Comunicação', 'Trabalho em equipe', 'Liderança', 'Proatividade', 'Organização'],
+  },
+  {
+    id: 'nivel_satisfacao',
+    type: 'select' as const,
+    label: 'Nível de satisfação com o estágio',
+    required: true,
+    options: ['Muito insatisfeito', 'Insatisfeito', 'Neutro', 'Satisfeito', 'Muito satisfeito'],
+  },
+  {
+    id: 'comentarios',
+    type: 'textarea' as const,
+    label: 'Comentários adicionais',
+    required: false,
+    placeholder: 'Digite seus comentários...',
+  },
+];
+
+const questionnaireFields2 = [
+  {
+    id: 'conhecimento_tecnico',
+    type: 'select' as const,
+    label: 'Nível de conhecimento técnico',
+    required: true,
+    options: ['Iniciante', 'Intermediário', 'Avançado'],
+  },
+  {
+    id: 'habilidades_tecnicas',
+    type: 'input' as const,
+    label: 'Descreva as principais habilidades técnicas desenvolvidas',
+    required: true,
+    placeholder: 'Ex: React, Node.js, SQL...',
+  },
+  {
+    id: 'ferramentas',
+    type: 'checkbox' as const,
+    label: 'Quais ferramentas foram utilizadas?',
+    required: false,
+    options: ['Git', 'Docker', 'Figma', 'Jira', 'Slack', 'VS Code'],
+  },
+  {
+    id: 'dificuldades',
+    type: 'textarea' as const,
+    label: 'Principais dificuldades encontradas',
+    required: false,
+    placeholder: 'Opcional',
+  },
+];
+
 export default class QuestionnaireSeeder implements Seeder {
   public async run(
     dataSource: DataSource,
@@ -9,54 +72,17 @@ export default class QuestionnaireSeeder implements Seeder {
   ): Promise<void> {
     const repository = dataSource.getRepository(Questionnaire);
 
-    const questionnaireJson1 = JSON.stringify({
-      title: 'Avaliação de Desempenho',
-      description: 'Questionário para avaliação de desempenho do aluno',
-      questions: [
-        {
-          id: 1,
-          type: 'resposta_curta',
-          text: 'Como você avalia o desempenho geral?',
-        },
-        {
-          id: 2,
-          type: 'checkbox',
-          text: 'Quais habilidades você desenvolveu?',
-          options: ['Comunicação', 'Trabalho em equipe', 'Liderança'],
-        },
-      ],
-    });
-
-    const questionnaireJson2 = JSON.stringify({
-      title: 'Avaliação de Competências',
-      description: 'Questionário para avaliação de competências técnicas',
-      questions: [
-        {
-          id: 1,
-          type: 'combobox',
-          text: 'Nível de conhecimento técnico',
-          options: ['Iniciante', 'Intermediário', 'Avançado'],
-        },
-        {
-          id: 2,
-          type: 'resposta_curta',
-          text: 'Descreva suas principais habilidades técnicas',
-        },
-      ],
-    });
-
     const questionnairesToInsert = [
       {
         nome: 'Avaliação de Desempenho',
-        questionario_json: questionnaireJson1,
+        questionario_json: JSON.stringify(questionnaireFields1, null, 2),
       },
       {
         nome: 'Avaliação de Competências',
-        questionario_json: questionnaireJson2,
+        questionario_json: JSON.stringify(questionnaireFields2, null, 2),
       },
     ];
 
-    // Verifica e insere apenas se não existir
     for (const questionnaireData of questionnairesToInsert) {
       const existing = await repository.findOne({
         where: { nome: questionnaireData.nome },
@@ -67,7 +93,6 @@ export default class QuestionnaireSeeder implements Seeder {
       }
     }
 
-    // Usar factory para gerar mais questionários (apenas se houver menos de 5 questionários)
     const existingCount = await repository.count();
     if (existingCount < 5) {
       const questionnaireFactory = factoryManager.get(Questionnaire);

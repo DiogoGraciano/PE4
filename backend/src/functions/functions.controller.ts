@@ -1,25 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Put,
-} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/roles/role.enum';
 import { FunctionsService } from './functions.service';
-import { CreateFunctionDto } from './dto/create-function.dto';
-import { UpdateFunctionDto } from './dto/update-function.dto';
 
 @Controller('functions')
+@Roles(Role.ADM, Role.RH, Role.COORD, Role.PROF, Role.DIR)
 export class FunctionsController {
   constructor(private readonly functionsService: FunctionsService) {}
-
-  @Post()
-  create(@Body() createFunctionDto: CreateFunctionDto) {
-    return this.functionsService.create(createFunctionDto);
-  }
 
   @Get()
   findAll() {
@@ -30,18 +17,4 @@ export class FunctionsController {
   findOne(@Param('id') id: string) {
     return this.functionsService.findOne(+id);
   }
-
-  @Put(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateFunctionDto: UpdateFunctionDto,
-  ) {
-    return this.functionsService.update(+id, updateFunctionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.functionsService.remove(+id);
-  }
 }
-

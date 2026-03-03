@@ -106,24 +106,9 @@ class ApiService {
     return response.data;
   }
 
-  // Métodos para funções
+  // Métodos para funções (somente leitura; lista fixa no backend)
   async getFunctions(): Promise<ApiResponse<any[]>> {
     const response = await this.api.get<ApiResponse<any[]>>('/functions');
-    return response.data;
-  }
-
-  async createFunction(functionData: any): Promise<ApiResponse<any>> {
-    const response = await this.api.post<ApiResponse<any>>('/functions', functionData);
-    return response.data;
-  }
-
-  async updateFunction(id: number, functionData: any): Promise<ApiResponse<any>> {
-    const response = await this.api.put<ApiResponse<any>>(`/functions/${id}`, functionData);
-    return response.data;
-  }
-
-  async deleteFunction(id: number): Promise<ApiResponse<void>> {
-    const response = await this.api.delete<ApiResponse<void>>(`/functions/${id}`);
     return response.data;
   }
 

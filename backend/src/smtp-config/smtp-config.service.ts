@@ -1,4 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SmtpConfig } from './entities/smtp-config.entity';
@@ -10,6 +11,7 @@ export class SmtpConfigService {
   constructor(
     @InjectRepository(SmtpConfig)
     private smtpConfigRepository: Repository<SmtpConfig>,
+    private configService: ConfigService,
   ) {}
 
   async getConfig() {
@@ -67,29 +69,64 @@ export class SmtpConfigService {
     }
   }
 
-  async sendEmail(to: string, subject: string, html: string) {
+  /**
+   * Obtém configuração SMTP: primeiro do banco (smtp_configs), depois das variáveis de ambiente (fallback para Docker/Mailpit).
+   */
+  private async getSmtpOptions(): Promise<{
+    host: string;
+    port: number;
+    secure: boolean;
+    auth: { user: string; pass: string };
+    from: string;
+  } | null> {
     const configResult = await this.getConfig();
-    const config = configResult.data;
+    const config = configResult.data as SmtpConfig | null;
 
-    if (!config) {
+    if (config?.host) {
+      return {
+        host: config.host,
+        port: config.port,
+        secure: config.secure ?? false,
+        auth: { user: config.user, pass: config.password },
+        from: config.from,
+      };
+    }
+
+    const host = this.configService.get<string>('SMTP_HOST');
+    const port = this.configService.get<number>('SMTP_PORT');
+    if (!host || !port) return null;
+
+    return {
+      host,
+      port: Number(port),
+      secure: this.configService.get<string>('SMTP_SECURE') === 'true',
+      auth: {
+        user: this.configService.get<string>('SMTP_USER') ?? '',
+        pass: this.configService.get<string>('SMTP_PASSWORD') ?? '',
+      },
+      from: this.configService.get<string>('SMTP_FROM') ?? 'noreply@localhost',
+    };
+  }
+
+  async sendEmail(to: string, subject: string, html: string) {
+    const options = await this.getSmtpOptions();
+
+    if (!options) {
       throw new InternalServerErrorException(
-        'Configuração SMTP não encontrada',
+        'Configuração SMTP não encontrada. Configure em /smtp-config ou defina SMTP_HOST e SMTP_PORT no ambiente.',
       );
     }
 
     try {
       const transporter = nodemailer.createTransport({
-        host: config.host,
-        port: config.port,
-        secure: config.secure,
-        auth: {
-          user: config.user,
-          pass: config.password,
-        },
+        host: options.host,
+        port: options.port,
+        secure: options.secure,
+        auth: options.auth.user ? options.auth : undefined,
       });
 
       await transporter.sendMail({
-        from: config.from,
+        from: options.from,
         to,
         subject,
         html,

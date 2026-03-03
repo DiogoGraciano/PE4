@@ -10,7 +10,7 @@ export default class SmtpConfigSeeder implements Seeder {
     const repository = dataSource.getRepository(SmtpConfig);
 
     // Verifica se já existe uma configuração SMTP
-    const existing = await repository.findOne({});
+    const [existing] = await repository.find({ take: 1 });
 
     if (!existing) {
       await repository.save({

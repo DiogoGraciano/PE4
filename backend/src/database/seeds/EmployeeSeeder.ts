@@ -12,14 +12,16 @@ export default class EmployeeSeeder implements Seeder {
     const repository = dataSource.getRepository(Employee);
     const functionRepository = dataSource.getRepository(Function);
 
-    // Buscar funções existentes
+    // Buscar funções existentes (obrigatório para RBAC: cada funcionário deve ter cargo)
     const functions = await functionRepository.find();
-    const adminFunction = functions.find((f) => f.codigo === 'ADM');
-    const profFunction = functions.find((f) => f.codigo === 'PROF');
+    const getFunctionByCodigo = (codigo: string) => functions.find((f) => f.codigo === codigo);
+    const adminFunction = getFunctionByCodigo('ADM');
+    const profFunction = getFunctionByCodigo('PROF');
+    const rhFunction = getFunctionByCodigo('RH');
+    const coordFunction = getFunctionByCodigo('COORD');
+    const dirFunction = getFunctionByCodigo('DIR');
 
-    // Criar senha hash para admin
-    const adminPassword = await bcrypt.hash('admin123', 10);
-    const profPassword = await bcrypt.hash('prof123', 10);
+    const defaultPassword = await bcrypt.hash('senha123', 10);
 
     const employeesToInsert = [
       {
@@ -27,7 +29,7 @@ export default class EmployeeSeeder implements Seeder {
         email: 'admin@pe4.com',
         telefone: '(11) 99999-9999',
         cpf: '123.456.789-00',
-        senha: adminPassword,
+        senha: await bcrypt.hash('admin123', 10),
         cep: '01310-100',
         cidade: 'São Paulo',
         estado: 'SP',
@@ -35,6 +37,7 @@ export default class EmployeeSeeder implements Seeder {
         pais: 'Brasil',
         numero_endereco: '100',
         complemento: null,
+        contato_empresarial: 'admin@pe4.com',
         funcao_id: adminFunction?.id,
       },
       {
@@ -42,7 +45,7 @@ export default class EmployeeSeeder implements Seeder {
         email: 'professor@pe4.com',
         telefone: '(11) 88888-8888',
         cpf: '987.654.321-00',
-        senha: profPassword,
+        senha: await bcrypt.hash('prof123', 10),
         cep: '01310-100',
         cidade: 'São Paulo',
         estado: 'SP',
@@ -50,7 +53,56 @@ export default class EmployeeSeeder implements Seeder {
         pais: 'Brasil',
         numero_endereco: '200',
         complemento: null,
+        contato_empresarial: 'professor@pe4.com',
         funcao_id: profFunction?.id,
+      },
+      {
+        nome: 'Recursos Humanos Teste',
+        email: 'rh@pe4.com',
+        telefone: '(11) 77777-7777',
+        cpf: '111.222.333-44',
+        senha: defaultPassword,
+        cep: '01310-100',
+        cidade: 'São Paulo',
+        estado: 'SP',
+        bairro: 'Bela Vista',
+        pais: 'Brasil',
+        numero_endereco: '300',
+        complemento: null,
+        contato_empresarial: 'rh@pe4.com',
+        funcao_id: rhFunction?.id,
+      },
+      {
+        nome: 'Coordenador Teste',
+        email: 'coordenador@pe4.com',
+        telefone: '(11) 66666-6666',
+        cpf: '555.666.777-88',
+        senha: defaultPassword,
+        cep: '01310-100',
+        cidade: 'São Paulo',
+        estado: 'SP',
+        bairro: 'Bela Vista',
+        pais: 'Brasil',
+        numero_endereco: '400',
+        complemento: null,
+        contato_empresarial: 'coordenador@pe4.com',
+        funcao_id: coordFunction?.id,
+      },
+      {
+        nome: 'Diretor Teste',
+        email: 'diretor@pe4.com',
+        telefone: '(11) 55555-5555',
+        cpf: '999.888.777-66',
+        senha: defaultPassword,
+        cep: '01310-100',
+        cidade: 'São Paulo',
+        estado: 'SP',
+        bairro: 'Bela Vista',
+        pais: 'Brasil',
+        numero_endereco: '500',
+        complemento: null,
+        contato_empresarial: 'diretor@pe4.com',
+        funcao_id: dirFunction?.id,
       },
     ];
 
@@ -65,20 +117,17 @@ export default class EmployeeSeeder implements Seeder {
       }
     }
 
-    // Usar factory para gerar mais funcionários (apenas se houver menos de 10 funcionários)
+    // Usar factory para gerar mais funcionários (apenas se houver cargos e menos de 10 funcionários)
     const existingCount = await repository.count();
-    if (existingCount < 10) {
+    if (existingCount < 10 && functions.length > 0) {
       const employeeFactory = factoryManager.get(Employee);
       const toCreate = 10 - existingCount;
       const additionalEmployees = await employeeFactory.saveMany(Math.min(toCreate, 3));
-      
-      // Atribuir funções aleatórias aos funcionários gerados
-      if (functions.length > 0 && additionalEmployees.length > 0) {
-        for (const employee of additionalEmployees) {
-          const randomFunction = functions[Math.floor(Math.random() * functions.length)];
-          employee.funcao_id = randomFunction.id;
-          await repository.save(employee);
-        }
+
+      for (const employee of additionalEmployees) {
+        const randomFunction = functions[Math.floor(Math.random() * functions.length)];
+        employee.funcao_id = randomFunction.id;
+        await repository.save(employee);
       }
     }
   }

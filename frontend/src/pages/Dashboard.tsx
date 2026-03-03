@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Building2, Briefcase, FileText, TrendingUp, Calendar, AlertTriangle, UserCog } from 'lucide-react';
+import { Users, Building2, FileText, TrendingUp, Calendar, AlertTriangle, UserCog } from 'lucide-react';
 import apiService from '../services/api';
 
 interface DashboardStats {
   totalStudents: number;
   totalCompanies: number;
-  totalFunctions: number;
   activeStudents: number;
   studentsNearTermination: number;
   recentEvaluations: number;
@@ -15,7 +14,6 @@ const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({
     totalStudents: 0,
     totalCompanies: 0,
-    totalFunctions: 0,
     activeStudents: 0,
     studentsNearTermination: 0,
     recentEvaluations: 0,
@@ -31,10 +29,9 @@ const Dashboard: React.FC = () => {
       setIsLoading(true);
       
       // Carregar dados básicos
-      const [studentsRes, companiesRes, functionsRes] = await Promise.all([
+      const [studentsRes, companiesRes] = await Promise.all([
         apiService.getStudents(),
         apiService.getCompanies(),
-        apiService.getFunctions(),
       ]);
 
       const students = studentsRes.data;
@@ -51,7 +48,6 @@ const Dashboard: React.FC = () => {
       setStats({
         totalStudents: students.length,
         totalCompanies: companiesRes.data.length,
-        totalFunctions: functionsRes.data.length,
         activeStudents,
         studentsNearTermination,
         recentEvaluations: 0, // Será implementado quando houver avaliações
@@ -88,14 +84,6 @@ const Dashboard: React.FC = () => {
       textColor: 'text-purple-600',
       bgColor: 'bg-purple-50',
     },
-    {
-      title: 'Funções/Cargos',
-      value: stats.totalFunctions,
-      icon: <Briefcase className="h-6 w-6" />,
-      color: 'bg-orange-500',
-      textColor: 'text-orange-600',
-      bgColor: 'bg-orange-50',
-    },
   ];
 
   const quickActions = [
@@ -114,15 +102,8 @@ const Dashboard: React.FC = () => {
       href: '/cadastros/empresas',
     },
     {
-      title: 'Nova Função',
-      description: 'Cadastrar nova função/cargo',
-      icon: <Briefcase className="h-8 w-8" />,
-      color: 'bg-orange-500 hover:bg-orange-600',
-      href: '/cadastros/funcoes',
-    },
-    {
-      title: 'Novo Funcionario',
-      description: 'Cadastrar novo funcionario',
+      title: 'Novo Funcionário',
+      description: 'Cadastrar novo funcionário',
       icon: <UserCog className="w-8 h-8" />,
       color: 'bg-green-500 hover:bg-green-600',
       href: '/cadastros/funcionarios',
@@ -148,7 +129,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {statCards.map((stat, index) => (
           <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center">
@@ -186,7 +167,7 @@ const Dashboard: React.FC = () => {
       {/* Quick Actions */}
       <div>
         <h2 className="text-lg font-medium text-gray-900 mb-4">Ações Rápidas</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {quickActions.map((action, index) => (
             <a
               key={index}

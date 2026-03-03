@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextInput, SelectInput, FormSection, FormActions } from '../inputs';
 import CepSearch from '../CepSearch';
-import type { Student, Company, Function } from '../../types';
+import type { Student, Company } from '../../types';
 import type { CepResponse } from '../../services/cepService';
 
 export interface StudentFormData {
@@ -20,7 +20,7 @@ export interface StudentFormData {
     responsavel: string;
     observacao: string;
     empresa_id: string;
-    funcao_id: string;
+    funcao: string;
     data_admissao: string;
     contato_rh: string;
     data_desligamento: string;
@@ -30,7 +30,6 @@ export interface StudentFormProps {
     formData: StudentFormData;
     onFormDataChange: (data: StudentFormData) => void;
     companies: Company[];
-    functions: Function[];
     editingStudent?: Student | null;
     onSubmit: (e: React.FormEvent) => void;
     onCancel: () => void;
@@ -41,7 +40,6 @@ const StudentForm: React.FC<StudentFormProps> = ({
     formData,
     onFormDataChange,
     companies,
-    functions,
     editingStudent,
     onSubmit,
     onCancel,
@@ -67,11 +65,6 @@ const StudentForm: React.FC<StudentFormProps> = ({
     const companyOptions = companies.map(company => ({
         value: company.id.toString(),
         label: company.razao_social
-    }));
-
-    const functionOptions = functions.map(func => ({
-        value: func.id.toString(),
-        label: func.nome_funcao
     }));
 
     return (
@@ -182,12 +175,11 @@ const StudentForm: React.FC<StudentFormProps> = ({
                         placeholder="Selecione uma empresa"
                     />
 
-                    <SelectInput
+                    <TextInput
                         label="Função"
-                        value={formData.funcao_id}
-                        onChange={(value) => updateField('funcao_id', value)}
-                        options={functionOptions}
-                        placeholder="Selecione uma função"
+                        value={formData.funcao}
+                        onChange={(value) => updateField('funcao', value)}
+                        placeholder="Ex: Estagiário, Trainee"
                     />
 
                     <TextInput

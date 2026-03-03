@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextInput, SelectInput, FormSection, FormActions } from '../inputs';
 import CepSearch from '../CepSearch';
+import { ROLE_PERMISSIONS } from '../../constants/rolePermissions';
 import type { Employee, Function } from '../../types';
 import type { CepResponse } from '../../services/cepService';
 
@@ -60,8 +61,14 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
 
     const functionOptions = functions.map(func => ({
         value: func.id.toString(),
-        label: func.nome_funcao
+        label: `${func.codigo} – ${func.nome_funcao}`
     }));
+
+    const selectedFunction = formData.funcao_id
+        ? functions.find(f => f.id === +formData.funcao_id)
+        : null;
+    const roleCodigo = selectedFunction?.codigo;
+    const permissions = roleCodigo ? ROLE_PERMISSIONS[roleCodigo] : null;
 
     return (
         <form onSubmit={onSubmit} className="space-y-6">
@@ -106,13 +113,26 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
                 />
 
                 <SelectInput
-                    label="Função"
+                    label="Cargo / Regra"
                     value={formData.funcao_id}
                     onChange={(value) => updateField('funcao_id', value)}
                     options={functionOptions}
-                    placeholder="Selecione uma função"
+                    placeholder="Selecione um cargo"
                     required
                 />
+
+                {permissions ? (
+                    <div className="md:col-span-2 rounded-md border border-gray-200 bg-gray-50 p-4">
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">Permissões desta regra</h4>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
+                            {permissions.map((perm, i) => (
+                                <li key={i}>{perm}</li>
+                            ))}
+                        </ul>
+                    </div>
+                ) : formData.funcao_id ? null : (
+                    <p className="md:col-span-2 text-sm text-gray-500">Selecione um cargo para ver as permissões.</p>
+                )}
 
                 <TextInput
                     label={`Senha ${!editingEmployee ? '*' : '(deixe em branco para manter a atual)'}`}

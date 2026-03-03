@@ -127,10 +127,19 @@ const Questionnaires: React.FC = () => {
     }
   };
 
+  const parseQuestionnaireFields = (jsonString: string): QuestionField[] => {
+    try {
+      const parsed = JSON.parse(jsonString);
+      return Array.isArray(parsed) ? parsed : (parsed?.fields ?? []);
+    } catch {
+      return [];
+    }
+  };
+
   const handleEdit = (questionnaire: Questionnaire) => {
     setEditingQuestionnaire(questionnaire);
     try {
-      const fields = JSON.parse(questionnaire.questionario_json);
+      const fields = parseQuestionnaireFields(questionnaire.questionario_json);
       setCurrentFields(fields);
       setFormData({
         nome: questionnaire.nome,
@@ -158,7 +167,7 @@ const Questionnaires: React.FC = () => {
 
   const handlePreview = (questionnaire: Questionnaire) => {
     try {
-      const fields = JSON.parse(questionnaire.questionario_json);
+      const fields = parseQuestionnaireFields(questionnaire.questionario_json);
       setPreviewFields(fields);
       setShowPreviewModal(true);
     } catch (error) {
@@ -190,7 +199,7 @@ const Questionnaires: React.FC = () => {
     }));
     
     try {
-      const fields = JSON.parse(jsonString);
+      const fields = parseQuestionnaireFields(jsonString);
       setCurrentFields(fields);
     } catch (error) {
       // JSON inválido, não atualiza os campos visuais
@@ -234,8 +243,8 @@ const Questionnaires: React.FC = () => {
       render: (questionnaire) => {
         let fieldCount = 0;
         try {
-          const fields = JSON.parse(questionnaire.questionario_json);
-          fieldCount = Array.isArray(fields) ? fields.length : 0;
+          const fields = parseQuestionnaireFields(questionnaire.questionario_json);
+          fieldCount = fields.length;
         } catch (error) {
           fieldCount = 0;
         }

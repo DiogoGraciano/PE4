@@ -15,7 +15,7 @@ export interface Student {
   responsavel: string;
   observacao?: string;
   empresa_id?: number;
-  funcao_id?: number;
+  funcao?: string;
   data_admissao?: string;
   contato_rh?: string;
   data_desligamento?: string;

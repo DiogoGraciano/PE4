@@ -7,11 +7,14 @@ import {
   Delete,
   Put,
 } from '@nestjs/common';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/roles/role.enum';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 
 @Controller('students')
+@Roles(Role.ADM, Role.COORD, Role.PROF, Role.RH)
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 

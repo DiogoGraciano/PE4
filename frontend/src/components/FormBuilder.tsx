@@ -11,6 +11,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
   const [showPreview, setShowPreview] = useState(true);
   const [showFieldModal, setShowFieldModal] = useState(false);
 
+  const fieldsList = Array.isArray(fields) ? fields : [];
+
   const fieldTypes = [
     { value: 'input', label: 'Campo de Texto', icon: '📝' },
     { value: 'textarea', label: 'Área de Texto', icon: '📄' },
@@ -35,37 +37,37 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
       newField.placeholder = `Digite ${type === 'input' ? 'o texto' : 'o conteúdo'}`;
     }
 
-    onChange([...fields, newField]);
+    onChange([...fieldsList, newField]);
     setShowFieldModal(false);
   };
 
   const updateField = (index: number, updatedField: QuestionField) => {
-    const newFields = [...fields];
+    const newFields = [...fieldsList];
     newFields[index] = updatedField;
     onChange(newFields);
   };
 
   const deleteField = (index: number) => {
-    const newFields = fields.filter((_, i) => i !== index);
+    const newFields = fieldsList.filter((_, i) => i !== index);
     onChange(newFields);
   };
 
   const moveField = (index: number, direction: 'up' | 'down') => {
     if (
       (direction === 'up' && index === 0) ||
-      (direction === 'down' && index === fields.length - 1)
+      (direction === 'down' && index === fieldsList.length - 1)
     ) {
       return;
     }
 
-    const newFields = [...fields];
+    const newFields = [...fieldsList];
     const newIndex = direction === 'up' ? index - 1 : index + 1;
     [newFields[index], newFields[newIndex]] = [newFields[newIndex], newFields[index]];
     onChange(newFields);
   };
 
   const addOption = (fieldIndex: number) => {
-    const field = fields[fieldIndex];
+    const field = fieldsList[fieldIndex];
     if (!field.options) return;
 
     const newOptions = [...field.options, `Opção ${field.options.length + 1}`];
@@ -74,7 +76,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
   };
 
   const removeOption = (fieldIndex: number, optionIndex: number) => {
-    const field = fields[fieldIndex];
+    const field = fieldsList[fieldIndex];
     if (!field.options || field.options.length <= 1) return;
 
     const newOptions = field.options.filter((_, i) => i !== optionIndex);
@@ -83,7 +85,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
   };
 
   const updateOption = (fieldIndex: number, optionIndex: number, value: string) => {
-    const field = fields[fieldIndex];
+    const field = fieldsList[fieldIndex];
     if (!field.options) return;
 
     const newOptions = [...field.options];
@@ -106,6 +108,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
           </div>
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={() => moveField(index, 'up')}
               disabled={index === 0}
               className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
@@ -114,14 +117,16 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
               <MoveUp size={16} />
             </button>
             <button
+              type="button"
               onClick={() => moveField(index, 'down')}
-              disabled={index === fields.length - 1}
+              disabled={index === fieldsList.length - 1}
               className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
               title="Mover para baixo"
             >
               <MoveDown size={16} />
             </button>
             <button
+              type="button"
               onClick={() => deleteField(index)}
               className="p-1 text-red-600 hover:text-red-800"
               title="Excluir campo"
@@ -239,6 +244,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
             <div className="flex items-center justify-between mb-2">
               <h4 className="text-sm font-medium text-gray-700">Opções</h4>
               <button
+                type="button"
                 onClick={() => addOption(index)}
                 className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
               >
@@ -256,6 +262,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
                     className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                   <button
+                    type="button"
                     onClick={() => removeOption(index, optionIndex)}
                     disabled={field.options && field.options.length <= 1}
                     className="p-1 text-red-600 hover:text-red-800 disabled:opacity-30"
@@ -277,7 +284,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
       <div className="border border-gray-200 rounded-lg p-6 bg-white">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Preview do Formulário</h3>
         <div className="space-y-4">
-          {fields.map((field, index) => {
+          {fieldsList.map((field, index) => {
             switch (field.type) {
               case 'input':
                 return (
@@ -383,6 +390,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
         <h3 className="text-lg font-medium text-gray-900">Construtor de Formulário</h3>
         <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={() => setShowFieldModal(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
           >
@@ -390,6 +398,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
             Adicionar Campo
           </button>
           <button
+            type="button"
             onClick={() => setShowPreview(!showPreview)}
             className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
               showPreview
@@ -410,6 +419,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">Adicionar Campo</h3>
               <button
+                type="button"
                 onClick={() => setShowFieldModal(false)}
                 className="text-gray-400 hover:text-gray-600"
               >
@@ -420,6 +430,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
               {fieldTypes.map((type) => (
                 <button
                   key={type.value}
+                  type="button"
                   onClick={() => addField(type.value)}
                   className="w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50 text-left flex items-center gap-3 transition-colors"
                 >
@@ -434,14 +445,14 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ fields, onChange }) => {
 
       {/* Lista de campos */}
       <div className="space-y-4">
-        {fields.length === 0 ? (
+        {fieldsList.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <div className="text-6xl mb-4">📝</div>
             <p className="text-lg font-medium">Nenhum campo adicionado</p>
             <p className="text-sm">Clique em "Adicionar Campo" para começar a construir seu formulário</p>
           </div>
         ) : (
-          fields.map((field, index) => renderFieldEditor(field, index))
+          fieldsList.map((field, index) => renderFieldEditor(field, index))
         )}
       </div>
 

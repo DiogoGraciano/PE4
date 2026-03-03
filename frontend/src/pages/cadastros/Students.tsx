@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/api';
-import type { Student, Company, Function } from '../../types';
+import type { Student, Company } from '../../types';
 import DataTable, { type Column, type ActionButton } from '../../components/DataTable';
 import SearchFilter from '../../components/SearchFilter';
 import Modal from '../../components/Modal';
@@ -19,11 +19,9 @@ const Students: React.FC = () => {
     const navigate = useNavigate();
     const [students, setStudents] = useState<Student[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
-    const [functions, setFunctions] = useState<Function[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCompany, setSelectedCompany] = useState<string>('');
-    const [selectedFunction, setSelectedFunction] = useState<string>('');
     const [showModal, setShowModal] = useState(false);
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
     const [formData, setFormData] = useState<StudentFormData>({
@@ -42,7 +40,7 @@ const Students: React.FC = () => {
         responsavel: '',
         observacao: '',
         empresa_id: '',
-        funcao_id: '',
+        funcao: '',
         data_admissao: '',
         contato_rh: '',
         data_desligamento: ''
@@ -55,15 +53,13 @@ const Students: React.FC = () => {
     const loadData = async () => {
         try {
             setLoading(true);
-            const [studentsRes, companiesRes, functionsRes] = await Promise.all([
+            const [studentsRes, companiesRes] = await Promise.all([
                 apiService.getStudents(),
-                apiService.getCompanies(),
-                apiService.getFunctions()
+                apiService.getCompanies()
             ]);
 
             setStudents(studentsRes.data || []);
             setCompanies(companiesRes.data || []);
-            setFunctions(functionsRes.data || []);
         } catch (error) {
             console.error('Erro ao carregar dados:', error);
         } finally {
@@ -133,8 +129,8 @@ const Students: React.FC = () => {
                 studentData.empresa_id = parseInt(formData.empresa_id, 10);
             }
 
-            if (formData.funcao_id) {
-                studentData.funcao_id = parseInt(formData.funcao_id, 10);
+            if (formData.funcao && formData.funcao.trim()) {
+                studentData.funcao = formData.funcao.trim();
             }
 
             if (formData.data_admissao) {
@@ -207,7 +203,7 @@ const Students: React.FC = () => {
                 responsavel: fullStudent.responsavel || '',
                 observacao: fullStudent.observacao || '',
                 empresa_id: fullStudent.empresa_id?.toString() || '',
-                funcao_id: fullStudent.funcao_id?.toString() || '',
+                funcao: fullStudent.funcao || '',
                 data_admissao: formatDateForInput(fullStudent.data_admissao),
                 contato_rh: fullStudent.contato_rh || '',
                 data_desligamento: formatDateForInput(fullStudent.data_desligamento)
@@ -233,7 +229,7 @@ const Students: React.FC = () => {
                 responsavel: student.responsavel || '',
                 observacao: student.observacao || '',
                 empresa_id: student.empresa_id?.toString() || '',
-                funcao_id: student.funcao_id?.toString() || '',
+                funcao: student.funcao || '',
                 data_admissao: formatDateForInput(student.data_admissao),
                 contato_rh: student.contato_rh || '',
                 data_desligamento: formatDateForInput(student.data_desligamento)
@@ -285,24 +281,21 @@ const Students: React.FC = () => {
 
 
     const filteredStudents = students.filter(student => {
-        const matchesSearch = 
-            (student.nome && student.nome.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (student.email && student.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            student.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.responsavel.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (student.observacao && student.observacao.toLowerCase().includes(searchTerm.toLowerCase()));
+        const term = searchTerm.toLowerCase();
+        const matchesSearch =
+            (student.nome && student.nome.toLowerCase().includes(term)) ||
+            (student.email && student.email.toLowerCase().includes(term)) ||
+            student.codigo.toLowerCase().includes(term) ||
+            student.responsavel.toLowerCase().includes(term) ||
+            (student.funcao && student.funcao.toLowerCase().includes(term)) ||
+            (student.observacao && student.observacao.toLowerCase().includes(term));
         const matchesCompany = !selectedCompany || student.empresa_id?.toString() === selectedCompany;
-        const matchesFunction = !selectedFunction || student.funcao_id?.toString() === selectedFunction;
 
-        return matchesSearch && matchesCompany && matchesFunction;
+        return matchesSearch && matchesCompany;
     });
 
     const getCompanyName = (companyId?: number) => {
         return companies.find(c => c.id === companyId)?.razao_social || 'N/A';
-    };
-
-    const getFunctionName = (functionId?: number) => {
-        return functions.find(f => f.id === functionId)?.nome_funcao || 'N/A';
     };
 
     // Definição das colunas da tabela
@@ -334,7 +327,7 @@ const Students: React.FC = () => {
         {
             key: 'funcao',
             label: 'Função',
-            render: (student) => getFunctionName(student.funcao_id)
+            render: (student) => student.funcao || '—'
         },
         {
             key: 'status',
@@ -412,15 +405,6 @@ const Students: React.FC = () => {
                             label: company.razao_social
                         })),
                         onChange: setSelectedCompany
-                    },
-                    {
-                        label: "Todas as funções",
-                        value: selectedFunction,
-                        options: functions.map(func => ({
-                            value: func.id.toString(),
-                            label: func.nome_funcao
-                        })),
-                        onChange: setSelectedFunction
                     }
                 ]}
                 actions={
@@ -458,7 +442,7 @@ const Students: React.FC = () => {
                     emptyState={{
                         icon: <User className="mx-auto h-12 w-12 text-gray-400" />,
                         title: "Nenhum aluno encontrado",
-                        description: searchTerm || selectedCompany || selectedFunction
+                        description: searchTerm || selectedCompany
                             ? 'Tente ajustar os filtros de busca.'
                             : 'Comece criando um novo aluno.'
                     }}
@@ -476,7 +460,6 @@ const Students: React.FC = () => {
                     formData={formData}
                     onFormDataChange={setFormData}
                     companies={companies}
-                    functions={functions}
                     editingStudent={editingStudent}
                     onSubmit={handleSubmit}
                     onCancel={() => setShowModal(false)}

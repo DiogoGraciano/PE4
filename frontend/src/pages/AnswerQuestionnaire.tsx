@@ -47,9 +47,13 @@ const AnswerQuestionnaire: React.FC = () => {
       }
 
       setQuestionnaire(questionnaireData);
-      
+
       try {
-        const parsedFields: QuestionField[] = JSON.parse(questionnaireData.questionario_json);
+        const parsed = JSON.parse(questionnaireData.questionario_json);
+        // questionario_json pode ser { title, fields } ou um array direto
+        const parsedFields: QuestionField[] = Array.isArray(parsed)
+          ? parsed
+          : (parsed?.fields ?? []);
         setFields(parsedFields);
       } catch (parseError) {
         setError('Erro ao processar a estrutura do questionário');

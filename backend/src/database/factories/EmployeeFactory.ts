@@ -19,7 +19,8 @@ export default setSeederFactory(Employee, async (faker) => {
   employee.pais = 'Brasil';
   employee.numero_endereco = faker.location.buildingNumber();
   employee.complemento = faker.datatype.boolean() ? faker.location.secondaryAddress() : null;
-  employee.contato_empresarial = faker.datatype.boolean() ? faker.phone.number() : null;
+  employee.contato_empresarial = faker.internet.email({ firstName, lastName }).toLowerCase();
+  // funcao_id é atribuído pelo EmployeeSeeder a todos os funcionários (RBAC)
 
   return employee;
 });

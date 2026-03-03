@@ -4,8 +4,6 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   Users,
   Building2,
-  UserCheck,
-  Briefcase,
   FileText,
   ClipboardList,
   LogOut,
@@ -40,7 +38,6 @@ const Layout: React.FC = () => {
         { name: 'Alunos/Usuários', path: '/cadastros/alunos', icon: <GraduationCap className="w-4 h-4" /> },
         { name: 'Empresas', path: '/cadastros/empresas', icon: <Building className="w-4 h-4" /> },
         { name: 'Funcionários', path: '/cadastros/funcionarios', icon: <UserCog className="w-4 h-4" /> },
-        { name: 'Funções', path: '/cadastros/funcoes', icon: <Briefcase className="w-4 h-4" /> },
         { name: 'Questionários', path: '/cadastros/questionarios', icon: <FileText className="w-4 h-4" /> },
       ]
     },
