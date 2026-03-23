@@ -266,7 +266,7 @@ const Students: React.FC = () => {
             responsavel: '',
             observacao: '',
             empresa_id: '',
-            funcao_id: '',
+            funcao: '',
             data_admissao: '',
             contato_rh: '',
             data_desligamento: ''

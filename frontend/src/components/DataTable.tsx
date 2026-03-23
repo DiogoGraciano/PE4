@@ -1,5 +1,4 @@
 import React from 'react';
-import { User, Building } from 'lucide-react';
 
 export interface Column<T> {
     key: keyof T | string;

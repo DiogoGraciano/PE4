@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Building2, FileText, TrendingUp, Calendar, AlertTriangle, UserCog } from 'lucide-react';
+import { Users, Building2, TrendingUp, Calendar, AlertTriangle, UserCog } from 'lucide-react';
 import apiService from '../services/api';
 
 interface DashboardStats {

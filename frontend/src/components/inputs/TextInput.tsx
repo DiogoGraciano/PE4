@@ -4,7 +4,7 @@ export interface TextInputProps {
     label: string;
     value: string;
     onChange: (value: string) => void;
-    type?: 'text' | 'email' | 'tel' | 'password';
+    type?: 'text' | 'email' | 'tel' | 'password' | 'date';
     required?: boolean;
     placeholder?: string;
     className?: string;

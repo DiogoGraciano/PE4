@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, CheckCircle, AlertCircle, ArrowLeft, Send } from 'lucide-react';
+import { FileText, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import apiService from '../services/api';
 import DynamicForm from '../components/DynamicForm';

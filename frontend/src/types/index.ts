@@ -24,6 +24,7 @@ export interface Student {
 }
 
 export interface Employee {
+  id: number;
   nome: string;
   email: string;
   telefone: string;
@@ -36,7 +37,8 @@ export interface Employee {
   numero_endereco: string;
   complemento: string;
   contato_empresarial: string;
-  funcao_id: string;
+  funcao_id: number;
+  tipo_usuario?: string;
   senha: string;
   confirmacao_senha: string;
 }

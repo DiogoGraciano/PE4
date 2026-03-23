@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, FormSection, FormActions } from '../inputs';
+import { FormSection, FormActions } from '../inputs';
 import CepSearch from '../CepSearch';
 import type { Company } from '../../types';
 import type { CepResponse } from '../../services/cepService';

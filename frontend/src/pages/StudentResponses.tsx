@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   User,
   FileText,
-  Search,
   Eye,
   ArrowLeft,
 } from 'lucide-react';
