@@ -8,12 +8,15 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/roles/role.enum';
 import { QuestionsService } from './questions.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 
+@ApiTags('Questions')
+@ApiBearerAuth()
 @Controller('questions')
 @Roles(Role.ADM, Role.COORD, Role.PROF)
 export class QuestionsController {

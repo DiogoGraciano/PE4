@@ -21,4 +21,3 @@ EXPOSE 3000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["bun", "run", "dist/main.js"]
-

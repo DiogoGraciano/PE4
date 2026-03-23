@@ -1,10 +1,13 @@
 import { Controller, Post, Body } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Public } from './decorators/public.decorator';
 
+@ApiTags('Auth')
+@ApiBearerAuth()
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

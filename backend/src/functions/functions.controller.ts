@@ -1,8 +1,11 @@
 import { Controller, Get, Param } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/roles/role.enum';
 import { FunctionsService } from './functions.service';
 
+@ApiTags('Functions')
+@ApiBearerAuth()
 @Controller('functions')
 @Roles(Role.ADM, Role.RH, Role.COORD, Role.PROF, Role.DIR)
 export class FunctionsController {

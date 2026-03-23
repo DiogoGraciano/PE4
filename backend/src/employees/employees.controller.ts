@@ -7,12 +7,15 @@ import {
   Delete,
   Put,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/roles/role.enum';
 
+@ApiTags('Employees')
+@ApiBearerAuth()
 @Controller('employees')
 @Roles(Role.ADM, Role.RH)
 export class EmployeesController {

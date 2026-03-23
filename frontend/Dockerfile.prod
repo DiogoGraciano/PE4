@@ -1,0 +1,55 @@
+# ---- Stage 1: Dependências ----
+FROM oven/bun:1-alpine AS deps
+
+WORKDIR /app
+
+COPY package.json bun.lock* ./
+RUN bun install --frozen-lockfile
+
+# ---- Stage 2: Build ----
+FROM oven/bun:1-alpine AS build
+
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+RUN bun run build
+
+# ---- Stage 3: Servir com Bun ----
+FROM oven/bun:1-alpine AS production
+
+WORKDIR /app
+
+COPY --from=build /app/dist ./dist
+
+# Servidor estático mínimo com Bun
+RUN cat > server.ts << 'EOF'
+const port = Number(process.env.PORT) || 4173;
+
+Bun.serve({
+  port,
+  async fetch(req) {
+    const url = new URL(req.url);
+    let path = url.pathname === "/" ? "/index.html" : url.pathname;
+    const filePath = `./dist${path}`;
+
+    const file = Bun.file(filePath);
+    if (await file.exists()) {
+      return new Response(file);
+    }
+
+    // SPA fallback: retorna index.html para rotas do React Router
+    return new Response(Bun.file("./dist/index.html"));
+  },
+});
+
+console.log(`Frontend servindo na porta ${port}`);
+EOF
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+EXPOSE 4173
+
+CMD ["bun", "run", "server.ts"]
