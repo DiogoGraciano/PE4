@@ -106,7 +106,7 @@ export default class EmployeeSeeder implements Seeder {
       },
     ];
 
-    // Verifica e insere apenas se não existir
+    // Verifica e insere ou atualiza funcao_id se necessário
     for (const employeeData of employeesToInsert) {
       const existing = await repository.findOne({
         where: [{ email: employeeData.email }, { cpf: employeeData.cpf }],
@@ -114,6 +114,9 @@ export default class EmployeeSeeder implements Seeder {
 
       if (!existing) {
         await repository.save(employeeData);
+      } else if (!existing.funcao_id && employeeData.funcao_id) {
+        existing.funcao_id = employeeData.funcao_id;
+        await repository.save(existing);
       }
     }
 
