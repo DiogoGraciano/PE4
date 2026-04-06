@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Plus,
     Edit,
@@ -7,17 +7,20 @@ import {
     Building,
     DownloadCloud,
 } from 'lucide-react';
-import { apiService } from '../../services/api';
-import type { Employee, Function } from '../../types';
+import type { Employee } from '../../types';
 import DataTable, { type Column, type ActionButton } from '../../components/DataTable';
 import SearchFilter from '../../components/SearchFilter';
 import Modal from '../../components/Modal';
 import { EmployeeForm, type EmployeeFormData } from '../../components/forms';
+import { useEmployees, useCreateEmployee, useUpdateEmployee, useDeleteEmployee } from '../../hooks/useEmployees';
+import { useFunctions } from '../../hooks/useFunctions';
 
 const Employees: React.FC = () => {
-    const [employees, setEmployees] = useState<Employee[]>([]);
-    const [functions, setFunctions] = useState<Function[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { data: employees = [], isLoading: loading } = useEmployees();
+    const { data: functions = [] } = useFunctions();
+    const createEmployee = useCreateEmployee();
+    const updateEmployee = useUpdateEmployee();
+    const deleteEmployee = useDeleteEmployee();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFunction, setSelectedFunction] = useState<string>('');
     const [showModal, setShowModal] = useState(false);
@@ -40,27 +43,6 @@ const Employees: React.FC = () => {
         confirmacao_senha: ''
     });
 
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const loadData = async () => {
-        try {
-            setLoading(true);
-            const [employeesRes, functionsRes] = await Promise.all([
-                apiService.getEmployees(),
-                apiService.getFunctions()
-            ]);
-
-            setEmployees(employeesRes.data || []);
-            setFunctions(functionsRes.data || []);
-        } catch (error) {
-            console.error('Erro ao carregar dados:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -80,7 +62,6 @@ const Employees: React.FC = () => {
             const { confirmacao_senha, ...dataToSend } = formData;
 
             if (editingEmployee) {
-                // Se estiver editando, só envia senha se ela foi preenchida
                 const finalData = formData.senha ? dataToSend : {
                     nome: dataToSend.nome,
                     email: dataToSend.email,
@@ -96,14 +77,13 @@ const Employees: React.FC = () => {
                     contato_empresarial: dataToSend.contato_empresarial,
                     funcao_id: dataToSend.funcao_id
                 };
-                await apiService.updateEmployee(editingEmployee.id, finalData);
+                await updateEmployee.mutateAsync({ id: editingEmployee.id, data: finalData });
             } else {
-                await apiService.createEmployee(dataToSend);
+                await createEmployee.mutateAsync(dataToSend);
             }
             setShowModal(false);
             setEditingEmployee(null);
             resetForm();
-            loadData();
         } catch (error) {
             console.error('Erro ao salvar funcionário:', error);
         }
@@ -134,8 +114,7 @@ const Employees: React.FC = () => {
     const handleDelete = async (id: number) => {
         if (window.confirm('Tem certeza que deseja excluir este funcionário?')) {
             try {
-                await apiService.deleteEmployee(id);
-                loadData();
+                await deleteEmployee.mutateAsync(id);
             } catch (error) {
                 console.error('Erro ao excluir funcionário:', error);
             }

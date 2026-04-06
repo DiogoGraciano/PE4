@@ -157,7 +157,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
             <FormSection title="Endereço">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="col-span-3">
-                        <CepSearch onCepFound={handleCepFound} />
+                        <CepSearch onCepFound={handleCepFound} value={formData.cep} />
                     </div>
                     
                     <TextInput

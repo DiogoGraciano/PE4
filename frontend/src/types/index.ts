@@ -14,13 +14,23 @@ export interface Student {
   codigo: string;
   responsavel: string;
   observacao?: string;
-  empresa_id?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Referral {
+  id: number;
+  aluno_id: number;
+  aluno?: Student;
+  empresa_id: number;
+  empresa?: Company;
   funcao?: string;
   data_admissao?: string;
   contato_rh?: string;
   data_desligamento?: string;
-  created_at?: string;
-  updated_at?: string;
+  observacao?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Employee {
@@ -159,6 +169,29 @@ export interface QuestionnaireResponse {
 
 export interface QuestionnaireResponseData {
   [fieldId: string]: string | boolean | string[];
+}
+
+export type EventType =
+  | 'visita_aluno'
+  | 'visita_empresa'
+  | 'visita_ambos'
+  | 'generico';
+
+export interface ScheduleEvent {
+  id: number;
+  titulo: string;
+  descricao?: string | null;
+  data_inicio: string;
+  data_fim: string;
+  tipo: EventType;
+  local?: string | null;
+  observacao?: string | null;
+  aluno_id?: number | null;
+  aluno?: Student | null;
+  empresa_id?: number | null;
+  empresa?: Company | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface LoginCredentials {

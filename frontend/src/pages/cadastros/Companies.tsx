@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Building2, MapPin, DownloadCloud } from 'lucide-react';
-import apiService from '../../services/api';
 import type { Company } from '../../types';
 import DataTable, { type Column, type ActionButton } from '../../components/DataTable';
 import SearchFilter from '../../components/SearchFilter';
 import Modal from '../../components/Modal';
 import { CompanyForm, type CompanyFormData } from '../../components/forms';
+import { useCompanies, useCreateCompany, useUpdateCompany, useDeleteCompany } from '../../hooks/useCompanies';
 
 const Companies: React.FC = () => {
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { data: companies = [], isLoading } = useCompanies();
+  const createCompany = useCreateCompany();
+  const updateCompany = useUpdateCompany();
+  const deleteCompany = useDeleteCompany();
   const [showModal, setShowModal] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,23 +29,6 @@ const Companies: React.FC = () => {
   });
 
   const [errors, setErrors] = useState<{[key: string]: string}>({});
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      setIsLoading(true);
-      const response = await apiService.getCompanies();
-      setCompanies(response.data || []);
-    } catch (error) {
-      console.error('Erro ao carregar empresas:', error);
-      setCompanies([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const validateCNPJ = (cnpj: string) => {
     // Remove caracteres não numéricos
@@ -138,28 +123,23 @@ const Companies: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     try {
-      setIsLoading(true);
-      
       if (editingCompany) {
-        await apiService.updateCompany(editingCompany.id, formData);
+        await updateCompany.mutateAsync({ id: editingCompany.id, data: formData });
       } else {
-        await apiService.createCompany(formData);
+        await createCompany.mutateAsync(formData);
       }
-      
+
       setShowModal(false);
       setEditingCompany(null);
       resetForm();
-      loadData();
     } catch (error) {
       console.error('Erro ao salvar empresa:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -183,8 +163,7 @@ const Companies: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm('Tem certeza que deseja excluir esta empresa?')) {
       try {
-        await apiService.deleteCompany(id);
-        loadData();
+        await deleteCompany.mutateAsync(id);
       } catch (error) {
         console.error('Erro ao excluir empresa:', error);
       }

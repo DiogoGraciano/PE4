@@ -1,90 +1,93 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Building2, TrendingUp, Calendar, AlertTriangle, UserCog } from 'lucide-react';
-import apiService from '../services/api';
-
-interface DashboardStats {
-  totalStudents: number;
-  totalCompanies: number;
-  activeStudents: number;
-  studentsNearTermination: number;
-  recentEvaluations: number;
-}
+import React, { useMemo } from 'react';
+import {
+  Users,
+  Building2,
+  TrendingUp,
+  Calendar,
+  AlertTriangle,
+  UserCog,
+  Briefcase,
+  ClipboardList,
+  CalendarClock,
+} from 'lucide-react';
+import { useStudents } from '../hooks/useStudents';
+import { useCompanies } from '../hooks/useCompanies';
+import { useReferrals } from '../hooks/useReferrals';
+import { useQuestionnaires } from '../hooks/useQuestionnaires';
+import { useQuestionnaireResponses } from '../hooks/useQuestionnaireResponses';
+import { useEvents } from '../hooks/useEvents';
+import KpiCard from '../components/dashboard/KpiCard';
+import PlacementDonut from '../components/dashboard/PlacementDonut';
+import GrowthTrendArea from '../components/dashboard/GrowthTrendArea';
+import TopCompaniesBar from '../components/dashboard/TopCompaniesBar';
+import StudentsByStateBar from '../components/dashboard/StudentsByStateBar';
+import EventsByTypePie from '../components/dashboard/EventsByTypePie';
+import ResponsesPerQuestionnaireBar from '../components/dashboard/ResponsesPerQuestionnaireBar';
+import {
+  buildGrowthTrend,
+  placementStats,
+  topCompanies,
+  studentsByState,
+  eventsByType,
+  responsesPerQuestionnaire,
+  recentReferrals,
+  studentsNearTermination,
+  upcomingEvents,
+} from '../components/dashboard/dashboardHelpers';
 
 const Dashboard: React.FC = () => {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalStudents: 0,
-    totalCompanies: 0,
-    activeStudents: 0,
-    studentsNearTermination: 0,
-    recentEvaluations: 0,
-  });
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: students = [], isLoading: studentsLoading } = useStudents();
+  const { data: companies = [], isLoading: companiesLoading } = useCompanies();
+  const { data: referrals = [], isLoading: referralsLoading } = useReferrals();
+  const { data: questionnaires = [], isLoading: questionnairesLoading } = useQuestionnaires();
+  const { data: responses = [], isLoading: responsesLoading } = useQuestionnaireResponses();
+  const { data: events = [], isLoading: eventsLoading } = useEvents();
 
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
+  const isLoading =
+    studentsLoading ||
+    companiesLoading ||
+    referralsLoading ||
+    questionnairesLoading ||
+    responsesLoading ||
+    eventsLoading;
 
-  const loadDashboardData = async () => {
-    try {
-      setIsLoading(true);
-      
-      // Carregar dados básicos
-      const [studentsRes, companiesRes] = await Promise.all([
-        apiService.getStudents(),
-        apiService.getCompanies(),
-      ]);
+  const placement = useMemo(
+    () => placementStats(students, referrals),
+    [students, referrals]
+  );
 
-      const students = studentsRes.data;
-      const activeStudents = students.filter((s: any) => !s.data_desligamento).length;
-      const studentsNearTermination = students.filter((s: any) => {
-        if (!s.data_desligamento) return false;
-        const terminationDate = new Date(s.data_desligamento);
-        const today = new Date();
-        const diffTime = terminationDate.getTime() - today.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays <= 30 && diffDays >= 0;
-      }).length;
+  const growthData = useMemo(
+    () => buildGrowthTrend(students, companies, referrals, 12),
+    [students, companies, referrals]
+  );
 
-      setStats({
-        totalStudents: students.length,
-        totalCompanies: companiesRes.data.length,
-        activeStudents,
-        studentsNearTermination,
-        recentEvaluations: 0, // Será implementado quando houver avaliações
-      });
-    } catch (error) {
-      console.error('Erro ao carregar dados do dashboard:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const topCompaniesData = useMemo(
+    () => topCompanies(referrals, companies, 5),
+    [referrals, companies]
+  );
 
-  const statCards = [
-    {
-      title: 'Total de Alunos',
-      value: stats.totalStudents,
-      icon: <Users className="h-6 w-6" />,
-      color: 'bg-blue-500',
-      textColor: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-    },
-    {
-      title: 'Alunos Ativos',
-      value: stats.activeStudents,
-      icon: <TrendingUp className="h-6 w-6" />,
-      color: 'bg-green-500',
-      textColor: 'text-green-600',
-      bgColor: 'bg-green-50',
-    },
-    {
-      title: 'Empresas Parceiras',
-      value: stats.totalCompanies,
-      icon: <Building2 className="h-6 w-6" />,
-      color: 'bg-purple-500',
-      textColor: 'text-purple-600',
-      bgColor: 'bg-purple-50',
-    },
-  ];
+  const stateData = useMemo(() => studentsByState(students, 6), [students]);
+
+  const eventTypeData = useMemo(() => eventsByType(events), [events]);
+
+  const responsesData = useMemo(
+    () => responsesPerQuestionnaire(questionnaires, responses),
+    [questionnaires, responses]
+  );
+
+  const lastReferrals = useMemo(() => recentReferrals(referrals, 5), [referrals]);
+
+  const nearTermination = useMemo(
+    () => studentsNearTermination(referrals, 30),
+    [referrals]
+  );
+
+  const upcoming = useMemo(() => upcomingEvents(events), [events]);
+
+  const activeReferrals = useMemo(
+    () => referrals.filter(r => !r.data_desligamento).length,
+    [referrals]
+  );
 
   const quickActions = [
     {
@@ -128,41 +131,116 @@ const Dashboard: React.FC = () => {
         </p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {statCards.map((stat, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                <div className={`${stat.textColor}`}>
-                  {stat.icon}
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              </div>
-            </div>
-          </div>
-        ))}
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <KpiCard
+          title="Total de Alunos"
+          value={students.length}
+          icon={<Users className="h-6 w-6" />}
+          color="blue"
+        />
+        <KpiCard
+          title="Alunos Colocados"
+          value={placement.placed}
+          icon={<TrendingUp className="h-6 w-6" />}
+          color="green"
+        />
+        <KpiCard
+          title="Empresas Parceiras"
+          value={companies.length}
+          icon={<Building2 className="h-6 w-6" />}
+          color="purple"
+        />
+        <KpiCard
+          title="Encaminhamentos Ativos"
+          value={activeReferrals}
+          icon={<Briefcase className="h-6 w-6" />}
+          color="amber"
+        />
+        <KpiCard
+          title="Respostas Recebidas"
+          value={responses.length}
+          icon={<ClipboardList className="h-6 w-6" />}
+          color="indigo"
+        />
+        <KpiCard
+          title="Eventos Próximos"
+          value={upcoming.length}
+          icon={<CalendarClock className="h-6 w-6" />}
+          color="rose"
+        />
       </div>
 
       {/* Alerts */}
-      {stats.studentsNearTermination > 0 && (
+      {nearTermination.length > 0 && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <div className="flex">
             <AlertTriangle className="h-5 w-5 text-yellow-400" />
             <div className="ml-3">
               <h3 className="text-sm font-medium text-yellow-800">
-                Alunos próximos do desligamento
+                Encaminhamentos próximos do desligamento
               </h3>
               <p className="mt-1 text-sm text-yellow-700">
-                {stats.studentsNearTermination} aluno(s) tem data de desligamento nos próximos 30 dias.
+                {nearTermination.length} encaminhamento(s) com data de desligamento nos próximos 30 dias.
               </p>
             </div>
           </div>
         </div>
       )}
+
+      {/* Charts row 1 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PlacementDonut stats={placement} />
+        <GrowthTrendArea data={growthData} />
+      </div>
+
+      {/* Charts row 2 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TopCompaniesBar data={topCompaniesData} />
+        <StudentsByStateBar data={stateData} />
+      </div>
+
+      {/* Charts row 3 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <EventsByTypePie data={eventTypeData} />
+        <ResponsesPerQuestionnaireBar data={responsesData} />
+      </div>
+
+      {/* Recent Activity */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-medium text-gray-900">Atividade Recente</h2>
+          <p className="text-xs text-gray-500 mt-1">Últimos encaminhamentos cadastrados</p>
+        </div>
+        <div className="p-6">
+          {lastReferrals.length === 0 ? (
+            <div className="text-center text-gray-500 py-8">
+              <Calendar className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p className="text-sm">Nenhuma atividade recente para exibir</p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-gray-100">
+              {lastReferrals.map(r => (
+                <li key={r.id} className="py-3 flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {r.aluno?.nome ?? `Aluno #${r.aluno_id}`}
+                      <span className="text-gray-400 font-normal"> → </span>
+                      {r.empresa?.razao_social ?? `Empresa #${r.empresa_id}`}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {r.funcao ?? 'Função não informada'}
+                    </p>
+                  </div>
+                  <span className="text-xs text-gray-500 shrink-0">
+                    {new Date(r.created_at).toLocaleDateString('pt-BR')}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
 
       {/* Quick Actions */}
       <div>
@@ -183,37 +261,6 @@ const Dashboard: React.FC = () => {
               </div>
             </a>
           ))}
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900">Atividade Recente</h2>
-        </div>
-        <div className="p-6">
-          <div className="text-center text-gray-500 py-8">
-            <Calendar className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <p className="text-sm">Nenhuma atividade recente para exibir</p>
-            <p className="text-xs text-gray-400 mt-1">
-              As atividades do sistema aparecerão aqui
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* System Info */}
-      <div className="bg-gray-50 rounded-lg p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Informações do Sistema</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-          <div>
-            <p><strong>Versão:</strong> PE4 v1.0.0</p>
-            <p><strong>Última atualização:</strong> {new Date().toLocaleDateString('pt-BR')}</p>
-          </div>
-          <div>
-            <p><strong>Status:</strong> <span className="text-green-600">Operacional</span></p>
-            <p><strong>Backup:</strong> Automático diário</p>
-          </div>
         </div>
       </div>
     </div>

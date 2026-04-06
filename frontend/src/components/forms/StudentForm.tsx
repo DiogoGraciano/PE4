@@ -1,7 +1,7 @@
 import React from 'react';
-import { TextInput, SelectInput, FormSection, FormActions } from '../inputs';
+import { TextInput, FormSection, FormActions } from '../inputs';
 import CepSearch from '../CepSearch';
-import type { Student, Company } from '../../types';
+import type { Student } from '../../types';
 import type { CepResponse } from '../../services/cepService';
 
 export interface StudentFormData {
@@ -19,17 +19,11 @@ export interface StudentFormData {
     codigo: string;
     responsavel: string;
     observacao: string;
-    empresa_id: string;
-    funcao: string;
-    data_admissao: string;
-    contato_rh: string;
-    data_desligamento: string;
 }
 
 export interface StudentFormProps {
     formData: StudentFormData;
     onFormDataChange: (data: StudentFormData) => void;
-    companies: Company[];
     editingStudent?: Student | null;
     onSubmit: (e: React.FormEvent) => void;
     onCancel: () => void;
@@ -39,7 +33,6 @@ export interface StudentFormProps {
 const StudentForm: React.FC<StudentFormProps> = ({
     formData,
     onFormDataChange,
-    companies,
     editingStudent,
     onSubmit,
     onCancel,
@@ -61,11 +54,6 @@ const StudentForm: React.FC<StudentFormProps> = ({
             bairro: cepData.bairro
         });
     };
-
-    const companyOptions = companies.map(company => ({
-        value: company.id.toString(),
-        label: company.razao_social
-    }));
 
     return (
         <form onSubmit={onSubmit} className="space-y-6">
@@ -119,9 +107,9 @@ const StudentForm: React.FC<StudentFormProps> = ({
             <FormSection title="Endereço">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="col-span-3">
-                        <CepSearch onCepFound={handleCepFound} />
+                        <CepSearch onCepFound={handleCepFound} value={formData.cep} />
                     </div>
-                    
+
                     <TextInput
                         label="Cidade"
                         value={formData.cidade}
@@ -160,46 +148,6 @@ const StudentForm: React.FC<StudentFormProps> = ({
                         label="País"
                         value={formData.pais}
                         onChange={(value) => updateField('pais', value)}
-                    />
-                </div>
-            </FormSection>
-
-            {/* Informações Profissionais */}
-            <FormSection title="Informações Profissionais">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <SelectInput
-                        label="Empresa"
-                        value={formData.empresa_id}
-                        onChange={(value) => updateField('empresa_id', value)}
-                        options={companyOptions}
-                        placeholder="Selecione uma empresa"
-                    />
-
-                    <TextInput
-                        label="Função"
-                        value={formData.funcao}
-                        onChange={(value) => updateField('funcao', value)}
-                        placeholder="Ex: Estagiário, Trainee"
-                    />
-
-                    <TextInput
-                        label="Data de Admissão"
-                        type="date"
-                        value={formData.data_admissao}
-                        onChange={(value) => updateField('data_admissao', value)}
-                    />
-
-                    <TextInput
-                        label="Contato RH"
-                        value={formData.contato_rh}
-                        onChange={(value) => updateField('contato_rh', value)}
-                    />
-
-                    <TextInput
-                        label="Data de Desligamento"
-                        type="date"
-                        value={formData.data_desligamento}
-                        onChange={(value) => updateField('data_desligamento', value)}
                     />
                 </div>
             </FormSection>

@@ -3,8 +3,6 @@ import {
   IsString,
   MaxLength,
   IsOptional,
-  IsInt,
-  IsDateString,
   IsEmail,
 } from 'class-validator';
 
@@ -78,27 +76,5 @@ export class CreateStudentDto {
   @IsString()
   @IsOptional()
   observacao?: string;
-
-  @IsInt()
-  @IsOptional()
-  empresa_id?: number;
-
-  @IsString()
-  @IsOptional()
-  @MaxLength(255)
-  funcao?: string;
-
-  @IsDateString()
-  @IsOptional()
-  data_admissao?: string;
-
-  @IsString()
-  @IsOptional()
-  @MaxLength(255)
-  contato_rh?: string;
-
-  @IsDateString()
-  @IsOptional()
-  data_desligamento?: string;
 }
 

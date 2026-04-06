@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, AlertCircle, CheckCircle, Server, Mail, Shield, Key } from 'lucide-react';
-import apiService from '../services/api';
+import { useSmtpConfig, useSaveSmtpConfig, useTestSmtpConnection } from '../hooks/useSmtpConfig';
 
 interface SmtpConfig {
   host: string;
@@ -56,7 +56,11 @@ function formatFromField(from_email: string, from_name: string): string {
   return from_email.trim();
 }
 
-const SmtpConfig: React.FC = () => {
+const SmtpConfigPage: React.FC = () => {
+  const { data: smtpData, isLoading: isLoadingConfig } = useSmtpConfig();
+  const saveSmtpConfig = useSaveSmtpConfig();
+  const testSmtpConnection = useTestSmtpConnection();
+
   const [config, setConfig] = useState<SmtpConfig>({
     host: '',
     port: 587,
@@ -73,34 +77,20 @@ const SmtpConfig: React.FC = () => {
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
-    loadSmtpConfig();
-  }, []);
-
-  const loadSmtpConfig = async () => {
-    try {
-      setIsLoading(true);
-      const response = await apiService.getSmtpConfig();
-      if (response.success && response.data) {
-        const backendData = response.data as SmtpConfigBackend;
-        // Converte o campo 'from' do backend para 'from_email' e 'from_name'
-        const { from_email, from_name } = parseFromField(backendData.from || '');
-        setConfig({
-          host: backendData.host || '',
-          port: backendData.port || 587,
-          secure: backendData.secure ?? false,
-          user: backendData.user || '',
-          password: '', // Não carrega a senha por segurança
-          from_email,
-          from_name,
-        });
-      }
-    } catch (error: any) {
-      console.error('Erro ao carregar configuração SMTP:', error);
-      // Não mostrar erro se for a primeira vez configurando
-    } finally {
-      setIsLoading(false);
+    if (smtpData) {
+      const backendData = smtpData as SmtpConfigBackend;
+      const { from_email, from_name } = parseFromField(backendData.from || '');
+      setConfig({
+        host: backendData.host || '',
+        port: backendData.port || 587,
+        secure: backendData.secure ?? false,
+        user: backendData.user || '',
+        password: '',
+        from_email,
+        from_name,
+      });
     }
-  };
+  }, [smtpData]);
 
   const handleInputChange = (field: keyof SmtpConfig, value: string | number | boolean) => {
     setConfig(prev => ({
@@ -155,7 +145,6 @@ const SmtpConfig: React.FC = () => {
       setError('');
       setSuccess('');
 
-      // Converte do formato frontend para o formato backend
       const backendConfig: SmtpConfigBackend = {
         host: config.host,
         port: config.port,
@@ -165,7 +154,7 @@ const SmtpConfig: React.FC = () => {
         from: formatFromField(config.from_email, config.from_name),
       };
 
-      await apiService.saveSmtpConfig(backendConfig);
+      await saveSmtpConfig.mutateAsync(backendConfig);
       setSuccess('Configuração SMTP salva com sucesso!');
     } catch (error: any) {
       setError(error.response?.data?.message || 'Erro ao salvar configuração SMTP.');
@@ -182,8 +171,7 @@ const SmtpConfig: React.FC = () => {
     try {
       setIsLoading(true);
       setError('');
-      
-      // Converte do formato frontend para o formato backend
+
       const backendConfig: SmtpConfigBackend = {
         host: config.host,
         port: config.port,
@@ -193,7 +181,7 @@ const SmtpConfig: React.FC = () => {
         from: formatFromField(config.from_email, config.from_name),
       };
 
-      await apiService.testSmtpConnection(backendConfig);
+      await testSmtpConnection.mutateAsync(backendConfig);
       setSuccess('Conexão SMTP testada com sucesso!');
     } catch (error: any) {
       setError(error.response?.data?.message || 'Erro ao testar conexão SMTP.');
@@ -202,7 +190,7 @@ const SmtpConfig: React.FC = () => {
     }
   };
 
-  if (isLoading && !config.host) {
+  if (isLoadingConfig && !config.host) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -422,4 +410,4 @@ const SmtpConfig: React.FC = () => {
   );
 };
 
-export default SmtpConfig;
+export default SmtpConfigPage;

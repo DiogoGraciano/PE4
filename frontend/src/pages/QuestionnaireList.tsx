@@ -1,35 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FileText, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import apiService from '../services/api';
 import type { Questionnaire } from '../types';
 import DataTable, { type Column, type ActionButton } from '../components/DataTable';
 import SearchFilter from '../components/SearchFilter';
+import { useQuestionnaires } from '../hooks/useQuestionnaires';
 
 const QuestionnaireList: React.FC = () => {
   const navigate = useNavigate();
-  const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { data: questionnaires = [], isLoading } = useQuestionnaires();
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      setIsLoading(true);
-      const response = await apiService.getQuestionnaires();
-      setQuestionnaires(response.data || []);
-    } catch (error) {
-      console.error('Erro ao carregar questionários:', error);
-      setQuestionnaires([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const filteredQuestionnaires = (questionnaires || []).filter(questionnaire => {
+  const filteredQuestionnaires = (questionnaires || []).filter((questionnaire: Questionnaire) => {
     if (!searchTerm.trim()) {
       return true;
     }

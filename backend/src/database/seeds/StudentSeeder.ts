@@ -1,7 +1,6 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
 import { Student } from '../../students/entities/student.entity';
-import { Company } from '../../companies/entities/company.entity';
 
 export default class StudentSeeder implements Seeder {
   public async run(
@@ -9,30 +8,17 @@ export default class StudentSeeder implements Seeder {
     factoryManager: SeederFactoryManager,
   ): Promise<void> {
     const repository = dataSource.getRepository(Student);
-    const companyRepository = dataSource.getRepository(Company);
-
-    const companies = await companyRepository.find();
 
     const students = [
       {
         codigo: 'AL001',
         responsavel: 'João Silva',
         observacao: 'Aluno dedicado e pontual',
-        empresa_id: companies.length > 0 ? companies[0].id : null,
-        funcao: 'Estagiário',
-        data_admissao: new Date('2024-01-15'),
-        contato_rh: 'rh@empresa.com',
-        data_desligamento: null,
       },
       {
         codigo: 'AL002',
         responsavel: 'Maria Santos',
         observacao: null,
-        empresa_id: companies.length > 1 ? companies[1].id : null,
-        funcao: 'Trainee',
-        data_admissao: new Date('2024-02-20'),
-        contato_rh: 'rh@empresa2.com',
-        data_desligamento: null,
       },
     ];
 

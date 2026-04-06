@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { useAuth } from './hooks/useAuth';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 
@@ -21,6 +21,9 @@ import SmtpConfig from './pages/SmtpConfig';
 import QuestionnaireList from './pages/QuestionnaireList';
 import AnswerQuestionnaire from './pages/AnswerQuestionnaire';
 import StudentResponses from './pages/StudentResponses';
+
+// Páginas de Agenda
+import Schedule from './pages/agenda/Schedule';
 
 // Componente principal do aplicativo
 const AppContent: React.FC = () => {
@@ -56,6 +59,9 @@ const AppContent: React.FC = () => {
           <Route path="respostas-questionarios" element={<QuestionnaireResponses />} />
         </Route>
 
+        {/* Rotas de Agenda */}
+        <Route path="agenda" element={<Schedule />} />
+
         {/* Rotas de Questionários */}
         <Route path="questionarios">
           <Route path="listar" element={<QuestionnaireList />} />
@@ -87,9 +93,7 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <Router>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <AppContent />
     </Router>
   );
 };

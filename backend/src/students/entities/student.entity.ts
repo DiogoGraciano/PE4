@@ -4,10 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
-import { Company } from '../../companies/entities/company.entity';
 
 @Entity('alunos')
 export class Student {
@@ -55,25 +52,6 @@ export class Student {
 
   @Column({ type: 'text', nullable: true })
   observacao: string | null;
-
-  @Column({ type: 'int', nullable: true })
-  empresa_id: number | null;
-
-  @ManyToOne(() => Company, { nullable: true })
-  @JoinColumn({ name: 'empresa_id' })
-  empresa: Company | null;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  funcao: string | null;
-
-  @Column({ type: 'date', nullable: true })
-  data_admissao: Date | null;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  contato_rh: string | null;
-
-  @Column({ type: 'date', nullable: true })
-  data_desligamento: Date | null;
 
   @CreateDateColumn()
   created_at: Date;

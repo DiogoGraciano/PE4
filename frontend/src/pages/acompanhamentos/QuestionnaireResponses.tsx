@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   FileText,
   Users,
@@ -10,78 +10,35 @@ import {
   User,
   Clock
 } from 'lucide-react';
-import apiService from '../../services/api';
 import QuestionnaireResponseModal from '../../components/QuestionnaireResponseModal';
 import type {
   Questionnaire,
   QuestionnaireResponse,
 } from '../../types';
+import { useQuestionnaires } from '../../hooks/useQuestionnaires';
+import { useQuestionnaireResponses } from '../../hooks/useQuestionnaireResponses';
 
 const QuestionnaireResponses: React.FC = () => {
-  const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
+  const { data: questionnaires = [] } = useQuestionnaires();
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<Questionnaire | null>(null);
-  const [responses, setResponses] = useState<QuestionnaireResponse[]>([]);
-  const [filteredResponses, setFilteredResponses] = useState<QuestionnaireResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { data: responses = [], isLoading } = useQuestionnaireResponses(selectedQuestionnaire?.id);
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedResponse, setSelectedResponse] = useState<QuestionnaireResponse | null>(null);
   const [expandedStats, setExpandedStats] = useState(false);
 
-  useEffect(() => {
-    loadQuestionnaires();
-  }, []);
-
-  useEffect(() => {
-    if (selectedQuestionnaire) {
-      loadResponses(selectedQuestionnaire.id);
-    }
-  }, [selectedQuestionnaire]);
-
-  useEffect(() => {
-    filterResponses();
-  }, [responses, searchTerm]);
-
-  const loadQuestionnaires = async () => {
-    try {
-      setIsLoading(true);
-      const response = await apiService.getQuestionnaires();
-      setQuestionnaires(response.data || []);
-    } catch (error) {
-      console.error('Erro ao carregar questionários:', error);
-      setQuestionnaires([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadResponses = async (questionnaireId: number) => {
-    try {
-      setIsLoading(true);
-      const response = await apiService.getQuestionnaireResponses(questionnaireId);
-      setResponses(response.data || []);
-    } catch (error) {
-      console.error('Erro ao carregar respostas:', error);
-      setResponses([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const filterResponses = () => {
+  const filteredResponses = useMemo(() => {
     if (!searchTerm) {
-      setFilteredResponses(responses || []);
-      return;
+      return responses || [];
     }
 
-    const filtered = (responses || []).filter(response => {
+    return (responses || []).filter((response: QuestionnaireResponse) => {
       const studentName = response.aluno?.nome?.toLowerCase() || '';
       const studentEmail = response.aluno?.email?.toLowerCase() || '';
       return studentName.includes(searchTerm.toLowerCase()) ||
              studentEmail.includes(searchTerm.toLowerCase());
     });
-    setFilteredResponses(filtered);
-  };
+  }, [responses, searchTerm]);
 
   const handleViewResponse = (response: QuestionnaireResponse) => {
     setSelectedResponse(response);

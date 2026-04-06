@@ -1,6 +1,8 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios';
 import type { AuthResponse, ApiResponse } from '../types';
+import { store } from '../store';
+import { clearAuth } from '../store/authSlice';
 
 class ApiService {
   private api: AxiosInstance;
@@ -35,8 +37,7 @@ class ApiService {
       },
       (error) => {
         if (error.response?.status === 401) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          store.dispatch(clearAuth());
           window.location.href = '/login';
         }
         return Promise.reject(error);
@@ -203,6 +204,64 @@ class ApiService {
 
   async resetPassword(token: string, password: string): Promise<ApiResponse<void>> {
     const response = await this.api.post<ApiResponse<void>>('/reset-password', { token, password });
+    return response.data;
+  }
+
+  // Métodos para encaminhamentos
+  async getReferrals(alunoId?: number): Promise<ApiResponse<any[]>> {
+    const url = alunoId ? `/referrals?aluno_id=${alunoId}` : '/referrals';
+    const response = await this.api.get<ApiResponse<any[]>>(url);
+    return response.data;
+  }
+
+  async getReferral(id: number): Promise<ApiResponse<any>> {
+    const response = await this.api.get<ApiResponse<any>>(`/referrals/${id}`);
+    return response.data;
+  }
+
+  async createReferral(data: any): Promise<ApiResponse<any>> {
+    const response = await this.api.post<ApiResponse<any>>('/referrals', data);
+    return response.data;
+  }
+
+  async updateReferral(id: number, data: any): Promise<ApiResponse<any>> {
+    const response = await this.api.put<ApiResponse<any>>(`/referrals/${id}`, data);
+    return response.data;
+  }
+
+  async deleteReferral(id: number): Promise<ApiResponse<void>> {
+    const response = await this.api.delete<ApiResponse<void>>(`/referrals/${id}`);
+    return response.data;
+  }
+
+  // Métodos para eventos / agendamentos
+  async getEvents(start?: string, end?: string): Promise<ApiResponse<any[]>> {
+    const params = new URLSearchParams();
+    if (start) params.append('start', start);
+    if (end) params.append('end', end);
+    const qs = params.toString();
+    const url = qs ? `/events?${qs}` : '/events';
+    const response = await this.api.get<ApiResponse<any[]>>(url);
+    return response.data;
+  }
+
+  async getEvent(id: number): Promise<ApiResponse<any>> {
+    const response = await this.api.get<ApiResponse<any>>(`/events/${id}`);
+    return response.data;
+  }
+
+  async createEvent(data: any): Promise<ApiResponse<any>> {
+    const response = await this.api.post<ApiResponse<any>>('/events', data);
+    return response.data;
+  }
+
+  async updateEvent(id: number, data: any): Promise<ApiResponse<any>> {
+    const response = await this.api.put<ApiResponse<any>>(`/events/${id}`, data);
+    return response.data;
+  }
+
+  async deleteEvent(id: number): Promise<ApiResponse<void>> {
+    const response = await this.api.delete<ApiResponse<void>>(`/events/${id}`);
     return response.data;
   }
 

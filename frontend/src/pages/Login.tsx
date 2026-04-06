@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
 
 const Login: React.FC = () => {

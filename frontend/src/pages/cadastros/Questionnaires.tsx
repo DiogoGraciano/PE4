@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Plus, Edit, Trash2, FileText, Save, Eye, Code, Palette, ClipboardList } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import apiService from '../../services/api';
 import type { Questionnaire, QuestionField } from '../../types';
 import DynamicForm from '../../components/DynamicForm';
 import FormBuilder from '../../components/FormBuilder';
 import DataTable, { type Column, type ActionButton } from '../../components/DataTable';
 import SearchFilter from '../../components/SearchFilter';
 import Modal from '../../components/Modal';
+import { useQuestionnaires, useCreateQuestionnaire, useUpdateQuestionnaire, useDeleteQuestionnaire } from '../../hooks/useQuestionnaires';
 
 const Questionnaires: React.FC = () => {
   const navigate = useNavigate();
-  const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { data: questionnaires = [], isLoading } = useQuestionnaires();
+  const createQuestionnaire = useCreateQuestionnaire();
+  const updateQuestionnaire = useUpdateQuestionnaire();
+  const deleteQuestionnaire = useDeleteQuestionnaire();
   const [showModal, setShowModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [editingQuestionnaire, setEditingQuestionnaire] = useState<Questionnaire | null>(null);
@@ -68,23 +70,6 @@ const Questionnaires: React.FC = () => {
     }
   ];
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      setIsLoading(true);
-      const response = await apiService.getQuestionnaires();
-      setQuestionnaires(response.data || []);
-    } catch (error) {
-      console.error('Erro ao carregar questionários:', error);
-      setQuestionnaires([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
 
@@ -113,15 +98,14 @@ const Questionnaires: React.FC = () => {
 
     try {
       if (editingQuestionnaire) {
-        await apiService.updateQuestionnaire(editingQuestionnaire.id, formData);
+        await updateQuestionnaire.mutateAsync({ id: editingQuestionnaire.id, data: formData });
       } else {
-        await apiService.createQuestionnaire(formData);
+        await createQuestionnaire.mutateAsync(formData);
       }
-      
+
       setShowModal(false);
       setEditingQuestionnaire(null);
       resetForm();
-      loadData();
     } catch (error) {
       console.error('Erro ao salvar questionário:', error);
     }
@@ -157,8 +141,7 @@ const Questionnaires: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm('Tem certeza que deseja excluir este questionário?')) {
       try {
-        await apiService.deleteQuestionnaire(id);
-        loadData();
+        await deleteQuestionnaire.mutateAsync(id);
       } catch (error) {
         console.error('Erro ao excluir questionário:', error);
       }

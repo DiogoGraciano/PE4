@@ -13,6 +13,8 @@ import { QuestionnairesModule } from './questionnaires/questionnaires.module';
 import { QuestionsModule } from './questions/questions.module';
 import { QuestionnaireResponsesModule } from './questionnaire-responses/questionnaire-responses.module';
 import { SmtpConfigModule } from './smtp-config/smtp-config.module';
+import { ReferralsModule } from './referrals/referrals.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -34,6 +36,8 @@ import { SmtpConfigModule } from './smtp-config/smtp-config.module';
     QuestionsModule,
     QuestionnaireResponsesModule,
     SmtpConfigModule,
+    ReferralsModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

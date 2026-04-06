@@ -37,7 +37,6 @@ export class StudentsService {
 
   async findAll() {
     const students = await this.studentsRepository.find({
-      relations: ['empresa'],
       order: { codigo: 'ASC' },
     });
 
@@ -51,7 +50,6 @@ export class StudentsService {
   async findOne(id: number) {
     const student = await this.studentsRepository.findOne({
       where: { id },
-      relations: ['empresa'],
     });
 
     if (!student) {

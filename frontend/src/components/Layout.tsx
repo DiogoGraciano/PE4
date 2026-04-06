@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import {
   Users,
   Building2,
@@ -16,7 +16,8 @@ import {
   ChevronDown,
   ChevronRight,
   Settings,
-  MessageSquare
+  MessageSquare,
+  Calendar
 } from 'lucide-react';
 
 const Layout: React.FC = () => {
@@ -26,11 +27,19 @@ const Layout: React.FC = () => {
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
     'Cadastros': true,
     'Acompanhamentos': true,
+    'Agenda': true,
     'Configurações': true,
     'Relatórios': true
   });
 
   const menuItems = [
+    {
+      title: 'Agenda',
+      icon: <Calendar className="w-5 h-5" />,
+      items: [
+        { name: 'Agendamentos', path: '/agenda', icon: <Calendar className="w-4 h-4" /> },
+      ]
+    },
     {
       title: 'Cadastros',
       icon: <Users className="w-5 h-5" />,

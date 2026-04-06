@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Loader2 } from 'lucide-react';
 import { cepService, type CepResponse } from '../services/cepService';
 
 interface CepSearchProps {
   onCepFound: (cepData: CepResponse) => void;
+  value?: string;
   className?: string;
 }
 
-const CepSearch: React.FC<CepSearchProps> = ({ onCepFound, className = '' }) => {
-  const [cep, setCep] = useState('');
+const CepSearch: React.FC<CepSearchProps> = ({ onCepFound, value = '', className = '' }) => {
+  const [cep, setCep] = useState(value);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setCep(value);
+  }, [value]);
 
   const handleSearch = async () => {
     if (!cep.trim()) {
@@ -29,7 +34,7 @@ const CepSearch: React.FC<CepSearchProps> = ({ onCepFound, className = '' }) => 
     try {
       const cepData = await cepService.buscarCep(cep);
       onCepFound(cepData);
-      setCep('');
+      setCep(cepData.cep);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao buscar CEP');
     } finally {

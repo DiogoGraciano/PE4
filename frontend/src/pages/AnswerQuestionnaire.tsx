@@ -1,71 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FileText, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import apiService from '../services/api';
 import DynamicForm from '../components/DynamicForm';
-import type { Questionnaire, QuestionField, QuestionFormData, Student } from '../types';
-import { useAuth } from '../contexts/AuthContext';
+import type { Questionnaire, QuestionField, QuestionFormData } from '../types';
+import { useAuth } from '../hooks/useAuth';
+import { useQuestionnaires } from '../hooks/useQuestionnaires';
+import { useStudents } from '../hooks/useStudents';
+import { useCreateQuestionnaireResponse } from '../hooks/useQuestionnaireResponses';
 
 const AnswerQuestionnaire: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [questionnaire, setQuestionnaire] = useState<Questionnaire | null>(null);
-  const [fields, setFields] = useState<QuestionField[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: questionnairesData = [], isLoading } = useQuestionnaires();
+  const { data: students = [] } = useStudents();
+  const createResponse = useCreateQuestionnaireResponse();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [students, setStudents] = useState<Student[]>([]);
   const [selectedAlunoId, setSelectedAlunoId] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (id) {
-      loadQuestionnaire();
-      loadStudents();
-    }
-  }, [id]);
+  const questionnaire = useMemo(() => {
+    return questionnairesData.find((q: Questionnaire) => q.id === parseInt(id || '0')) || null;
+  }, [questionnairesData, id]);
 
-  const loadStudents = async () => {
+  const fields = useMemo((): QuestionField[] => {
+    if (!questionnaire) return [];
     try {
-      const response = await apiService.getStudents();
-      setStudents(response.data || []);
-    } catch (error) {
-      console.error('Erro ao carregar alunos:', error);
+      const parsed = JSON.parse(questionnaire.questionario_json);
+      return Array.isArray(parsed) ? parsed : (parsed?.fields ?? []);
+    } catch {
+      return [];
     }
-  };
-
-  const loadQuestionnaire = async () => {
-    try {
-      setIsLoading(true);
-      const response = await apiService.getQuestionnaires();
-      const questionnaireData = response.data?.find((q: Questionnaire) => q.id === parseInt(id || '0'));
-      
-      if (!questionnaireData) {
-        setError('Questionário não encontrado');
-        return;
-      }
-
-      setQuestionnaire(questionnaireData);
-
-      try {
-        const parsed = JSON.parse(questionnaireData.questionario_json);
-        // questionario_json pode ser { title, fields } ou um array direto
-        const parsedFields: QuestionField[] = Array.isArray(parsed)
-          ? parsed
-          : (parsed?.fields ?? []);
-        setFields(parsedFields);
-      } catch (parseError) {
-        setError('Erro ao processar a estrutura do questionário');
-        console.error('Erro ao fazer parse do JSON:', parseError);
-      }
-    } catch (error) {
-      console.error('Erro ao carregar questionário:', error);
-      setError('Erro ao carregar questionário');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [questionnaire]);
 
   const handleSubmit = async (formData: QuestionFormData) => {
     if (!questionnaire) {
@@ -96,7 +63,7 @@ const AnswerQuestionnaire: React.FC = () => {
         data_envio: new Date().toISOString(),
       };
 
-      await apiService.createQuestionnaireResponse(responseData);
+      await createResponse.mutateAsync(responseData);
       
       setSubmitSuccess(true);
       

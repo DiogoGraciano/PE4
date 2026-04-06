@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   User,
   FileText,
@@ -6,77 +6,43 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import apiService from '../services/api';
 import QuestionnaireResponseModal from '../components/QuestionnaireResponseModal';
 import type {
-  Student,
   QuestionnaireResponse,
   Questionnaire,
 } from '../types';
 import DataTable, { type Column, type ActionButton } from '../components/DataTable';
 import SearchFilter from '../components/SearchFilter';
+import { useStudent } from '../hooks/useStudents';
+import { useQuestionnaireResponses } from '../hooks/useQuestionnaireResponses';
 
 const StudentResponses: React.FC = () => {
   const { studentId } = useParams<{ studentId: string }>();
   const navigate = useNavigate();
-  const [student, setStudent] = useState<Student | null>(null);
-  const [responses, setResponses] = useState<QuestionnaireResponse[]>([]);
-  const [filteredResponses, setFilteredResponses] = useState<QuestionnaireResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const parsedStudentId = parseInt(studentId || '0');
+  const { data: student = null } = useStudent(parsedStudentId);
+  const { data: allResponses = [], isLoading } = useQuestionnaireResponses();
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedResponse, setSelectedResponse] = useState<QuestionnaireResponse | null>(null);
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<Questionnaire | null>(null);
 
-  useEffect(() => {
-    if (studentId) {
-      loadStudentData();
-    }
-  }, [studentId]);
+  const responses = useMemo(() => {
+    return (allResponses || []).filter(
+      (response: QuestionnaireResponse) => response.aluno_id === parsedStudentId
+    );
+  }, [allResponses, parsedStudentId]);
 
-  useEffect(() => {
-    filterResponses();
-  }, [responses, searchTerm]);
-
-  const loadStudentData = async () => {
-    try {
-      setIsLoading(true);
-      
-      // Carregar dados do aluno
-      if (studentId) {
-        const studentResponse = await apiService.getStudent(parseInt(studentId));
-        setStudent(studentResponse.data);
-      }
-
-      // Carregar todas as respostas e filtrar por aluno
-      const allResponsesResponse = await apiService.getQuestionnaireResponses();
-      const allResponses = allResponsesResponse.data || [];
-      
-      // Filtrar respostas do aluno específico
-      const studentResponses = allResponses.filter(
-        (response: QuestionnaireResponse) => response.aluno_id === parseInt(studentId || '0')
-      );
-      
-      setResponses(studentResponses);
-    } catch (error) {
-      console.error('Erro ao carregar dados do aluno:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const filterResponses = () => {
+  const filteredResponses = useMemo(() => {
     if (!searchTerm) {
-      setFilteredResponses(responses || []);
-      return;
+      return responses || [];
     }
 
-    const filtered = (responses || []).filter((response) => {
+    return (responses || []).filter((response: QuestionnaireResponse) => {
       const questionnaireName = response.questionario?.nome?.toLowerCase() || '';
       return questionnaireName.includes(searchTerm.toLowerCase());
     });
-    setFilteredResponses(filtered);
-  };
+  }, [responses, searchTerm]);
 
   const handleViewResponse = (response: QuestionnaireResponse) => {
     setSelectedResponse(response);

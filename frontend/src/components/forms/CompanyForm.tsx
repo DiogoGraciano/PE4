@@ -103,7 +103,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* CEP */}
                     <div className="col-span-3">
-                        <CepSearch onCepFound={handleCepFound} />
+                        <CepSearch onCepFound={handleCepFound} value={formData.cep} />
                     </div>
 
                     {/* Cidade */}
