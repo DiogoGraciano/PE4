@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, FileText, Save, Eye, Code, Palette, ClipboardList } from 'lucide-react';
+import { Plus, Edit, Trash2, FileText, Save, Eye, Code, Palette, ClipboardList, DownloadCloud } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { Questionnaire, QuestionField } from '../../types';
 import DynamicForm from '../../components/DynamicForm';
@@ -7,6 +7,7 @@ import FormBuilder from '../../components/FormBuilder';
 import DataTable, { type Column, type ActionButton } from '../../components/DataTable';
 import SearchFilter from '../../components/SearchFilter';
 import Modal from '../../components/Modal';
+import ReportModal, { type ReportOption } from '../../components/ReportModal';
 import { useQuestionnaires, useCreateQuestionnaire, useUpdateQuestionnaire, useDeleteQuestionnaire } from '../../hooks/useQuestionnaires';
 
 const Questionnaires: React.FC = () => {
@@ -21,6 +22,12 @@ const Questionnaires: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [previewFields, setPreviewFields] = useState<QuestionField[]>([]);
   const [editMode, setEditMode] = useState<'visual' | 'json'>('visual');
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+
+  const questionnaireReportOptions: ReportOption[] = [
+    { label: 'Lista de questionários', type: 'full', description: 'Todos os questionários cadastrados com data de criação' },
+    { label: 'Relatório de respostas', type: 'responses', description: 'Todas as respostas recebidas com aluno e data de envio' },
+  ];
   const [currentFields, setCurrentFields] = useState<QuestionField[]>([]);
 
   const [formData, setFormData] = useState({
@@ -296,6 +303,13 @@ const Questionnaires: React.FC = () => {
               Responder Questionários
             </button>
             <button
+              onClick={() => setReportModalOpen(true)}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <DownloadCloud className="w-4 h-4 mr-2" />
+              Gerar Relatório
+            </button>
+            <button
               onClick={openNewModal}
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
@@ -467,6 +481,14 @@ const Questionnaires: React.FC = () => {
           onCancel={() => setShowPreviewModal(false)}
         />
       </Modal>
+
+      <ReportModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        title="Relatórios de Questionários"
+        entity="questionnaires"
+        options={questionnaireReportOptions}
+      />
     </div>
   );
 };

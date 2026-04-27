@@ -17,6 +17,7 @@ import DataTable, { type Column, type ActionButton } from '../../components/Data
 import SearchFilter from '../../components/SearchFilter';
 import Modal from '../../components/Modal';
 import CompanySelectModal from '../../components/CompanySelectModal';
+import ReportModal, { type ReportOption } from '../../components/ReportModal';
 import { StudentForm, type StudentFormData } from '../../components/forms';
 import { TextInput, FormActions } from '../../components/inputs';
 import { useStudents, useCreateStudent, useUpdateStudent, useDeleteStudent } from '../../hooks/useStudents';
@@ -60,6 +61,12 @@ const Students: React.FC = () => {
     const [editingReferral, setEditingReferral] = useState<Referral | null>(null);
     const [referralForm, setReferralForm] = useState<ReferralFormData>(emptyReferralForm);
     const [showCompanyModal, setShowCompanyModal] = useState(false);
+    const [reportModalOpen, setReportModalOpen] = useState(false);
+
+    const studentReportOptions: ReportOption[] = [
+      { label: 'Lista completa de alunos', type: 'full', description: 'Todos os alunos com CPF, email e responsável' },
+      { label: 'Alunos com observações', type: 'with-notes', description: 'Apenas alunos que possuem observações cadastradas' },
+    ];
 
     const { data: referrals = [], isLoading: referralsLoading } = useReferrals(selectedStudent?.id);
     const createReferral = useCreateReferral();
@@ -410,7 +417,10 @@ const Students: React.FC = () => {
                             <Plus className="w-4 h-4 mr-2" />
                             Novo Aluno
                         </button>
-                        <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <button
+                            onClick={() => setReportModalOpen(true)}
+                            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
                             <DownloadCloud className="w-4 h-4 mr-2" />
                             Gerar Relatório
                         </button>
@@ -565,6 +575,14 @@ const Students: React.FC = () => {
                 companies={companies}
                 selectedId={referralForm.empresa_id}
                 onSelect={(id) => setReferralForm({ ...referralForm, empresa_id: id })}
+            />
+
+            <ReportModal
+                isOpen={reportModalOpen}
+                onClose={() => setReportModalOpen(false)}
+                title="Relatórios de Alunos"
+                entity="students"
+                options={studentReportOptions}
             />
         </div>
     );

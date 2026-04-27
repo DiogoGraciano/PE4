@@ -15,6 +15,7 @@ import { QuestionnaireResponsesModule } from './questionnaire-responses/question
 import { SmtpConfigModule } from './smtp-config/smtp-config.module';
 import { ReferralsModule } from './referrals/referrals.module';
 import { EventsModule } from './events/events.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { EventsModule } from './events/events.module';
     SmtpConfigModule,
     ReferralsModule,
     EventsModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

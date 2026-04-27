@@ -11,6 +11,7 @@ import type { Employee } from '../../types';
 import DataTable, { type Column, type ActionButton } from '../../components/DataTable';
 import SearchFilter from '../../components/SearchFilter';
 import Modal from '../../components/Modal';
+import ReportModal, { type ReportOption } from '../../components/ReportModal';
 import { EmployeeForm, type EmployeeFormData } from '../../components/forms';
 import { useEmployees, useCreateEmployee, useUpdateEmployee, useDeleteEmployee } from '../../hooks/useEmployees';
 import { useFunctions } from '../../hooks/useFunctions';
@@ -23,6 +24,12 @@ const Employees: React.FC = () => {
     const deleteEmployee = useDeleteEmployee();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFunction, setSelectedFunction] = useState<string>('');
+    const [reportModalOpen, setReportModalOpen] = useState(false);
+
+    const employeeReportOptions: ReportOption[] = [
+      { label: 'Lista completa de funcionários', type: 'full', description: 'Todos os funcionários com função e contato' },
+      { label: 'Funcionários agrupados por função', type: 'by-function', description: 'Funcionários organizados por cargo/função' },
+    ];
     const [showModal, setShowModal] = useState(false);
     const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
     const [formData, setFormData] = useState<EmployeeFormData>({
@@ -260,10 +267,11 @@ const Employees: React.FC = () => {
                     </button>
                     
                     <button
+                        onClick={() => setReportModalOpen(true)}
                         className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
                         <DownloadCloud className="w-4 h-4 mr-2" />
-                        Gerar Relatôrio
+                        Gerar Relatório
                     </button>
                     </>
                 }
@@ -307,6 +315,14 @@ const Employees: React.FC = () => {
                     onCancel={() => setShowModal(false)}
                 />
             </Modal>
+
+            <ReportModal
+                isOpen={reportModalOpen}
+                onClose={() => setReportModalOpen(false)}
+                title="Relatórios de Funcionários"
+                entity="employees"
+                options={employeeReportOptions}
+            />
         </div>
     );
 };

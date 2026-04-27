@@ -20,7 +20,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "ts-node -r tsconfig-paths/register src/database/run-seeders.ts",
     "seed:run": "ts-node -r tsconfig-paths/register src/database/run-seeders.ts",
-    "seed:prod": "node dist/database/run-seeders.js"
+    "seed:prod": "node dist/database/run-seeders.js",
+    "migrate:fresh": "ts-node -r tsconfig-paths/register src/database/migrate-fresh.ts",
+    "migrate:fresh:seed": "ts-node -r tsconfig-paths/register src/database/migrate-fresh.ts --seed"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.8",
@@ -32,6 +34,7 @@
     "@nestjs/platform-express": "^11.1.8",
     "@nestjs/swagger": "^11.2.6",
     "@nestjs/typeorm": "^11.0.0",
+    "@types/pdfkit": "^0.17.6",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
@@ -39,6 +42,7 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "pdfkit": "^0.18.0",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",

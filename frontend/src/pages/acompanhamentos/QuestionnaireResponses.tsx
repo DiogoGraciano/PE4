@@ -8,9 +8,11 @@ import {
   ChevronDown,
   ChevronRight,
   User,
-  Clock
+  Clock,
+  DownloadCloud,
 } from 'lucide-react';
 import QuestionnaireResponseModal from '../../components/QuestionnaireResponseModal';
+import ReportModal, { type ReportOption } from '../../components/ReportModal';
 import type {
   Questionnaire,
   QuestionnaireResponse,
@@ -26,6 +28,12 @@ const QuestionnaireResponses: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedResponse, setSelectedResponse] = useState<QuestionnaireResponse | null>(null);
   const [expandedStats, setExpandedStats] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+
+  const questionnaireReportOptions: ReportOption[] = [
+    { label: 'Lista de questionários', type: 'full', description: 'Todos os questionários cadastrados com data de criação' },
+    { label: 'Relatório de respostas', type: 'responses', description: 'Todas as respostas recebidas com aluno e data de envio' },
+  ];
 
   const filteredResponses = useMemo(() => {
     if (!searchTerm) {
@@ -69,6 +77,13 @@ const QuestionnaireResponses: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Respostas de Questionários</h1>
+        <button
+          onClick={() => setReportModalOpen(true)}
+          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <DownloadCloud className="w-4 h-4 mr-2" />
+          Gerar Relatório
+        </button>
       </div>
 
       {/* Seleção de Questionário */}
@@ -262,6 +277,14 @@ const QuestionnaireResponses: React.FC = () => {
         }}
         response={selectedResponse}
         questionnaire={selectedQuestionnaire}
+      />
+
+      <ReportModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        title="Relatórios de Questionários"
+        entity="questionnaires"
+        options={questionnaireReportOptions}
       />
     </div>
   );

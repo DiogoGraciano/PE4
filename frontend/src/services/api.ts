@@ -280,6 +280,17 @@ class ApiService {
     const response = await this.api.post<ApiResponse<any>>('/smtp-config-test', config);
     return response.data;
   }
+
+  async downloadReport(
+    entity: 'companies' | 'employees' | 'students' | 'questionnaires',
+    type: string,
+  ): Promise<Blob> {
+    const response = await this.api.get(`/reports/${entity}`, {
+      params: { type },
+      responseType: 'blob',
+    });
+    return response.data as Blob;
+  }
 }
 
 export const apiService = new ApiService();

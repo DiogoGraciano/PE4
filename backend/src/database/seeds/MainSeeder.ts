@@ -7,6 +7,9 @@ import StudentSeeder from './StudentSeeder';
 import QuestionnaireSeeder from './QuestionnaireSeeder';
 import QuestionSeeder from './QuestionSeeder';
 import SmtpConfigSeeder from './SmtpConfigSeeder';
+import ReferralSeeder from './ReferralSeeder';
+import EventSeeder from './EventSeeder';
+import QuestionnaireResponseSeeder from './QuestionnaireResponseSeeder';
 
 export default class MainSeeder implements Seeder {
   public async run(
@@ -15,34 +18,35 @@ export default class MainSeeder implements Seeder {
   ): Promise<void> {
     console.log('Iniciando seeders...');
 
-    // Executar seeders na ordem correta (respeitando dependências)
     console.log('1. Executando FunctionSeeder...');
-    const functionSeeder = new FunctionSeeder();
-    await functionSeeder.run(dataSource, factoryManager);
+    await new FunctionSeeder().run(dataSource, factoryManager);
 
     console.log('2. Executando CompanySeeder...');
-    const companySeeder = new CompanySeeder();
-    await companySeeder.run(dataSource, factoryManager);
+    await new CompanySeeder().run(dataSource, factoryManager);
 
     console.log('3. Executando EmployeeSeeder...');
-    const employeeSeeder = new EmployeeSeeder();
-    await employeeSeeder.run(dataSource, factoryManager);
+    await new EmployeeSeeder().run(dataSource, factoryManager);
 
     console.log('4. Executando StudentSeeder...');
-    const studentSeeder = new StudentSeeder();
-    await studentSeeder.run(dataSource, factoryManager);
+    await new StudentSeeder().run(dataSource, factoryManager);
 
     console.log('5. Executando QuestionnaireSeeder...');
-    const questionnaireSeeder = new QuestionnaireSeeder();
-    await questionnaireSeeder.run(dataSource, factoryManager);
+    await new QuestionnaireSeeder().run(dataSource, factoryManager);
 
     console.log('6. Executando QuestionSeeder...');
-    const questionSeeder = new QuestionSeeder();
-    await questionSeeder.run(dataSource, factoryManager);
+    await new QuestionSeeder().run(dataSource, factoryManager);
 
     console.log('7. Executando SmtpConfigSeeder...');
-    const smtpConfigSeeder = new SmtpConfigSeeder();
-    await smtpConfigSeeder.run(dataSource, factoryManager);
+    await new SmtpConfigSeeder().run(dataSource, factoryManager);
+
+    console.log('8. Executando ReferralSeeder...');
+    await new ReferralSeeder().run(dataSource, factoryManager);
+
+    console.log('9. Executando EventSeeder...');
+    await new EventSeeder().run(dataSource, factoryManager);
+
+    console.log('10. Executando QuestionnaireResponseSeeder...');
+    await new QuestionnaireResponseSeeder().run(dataSource, factoryManager);
 
     console.log('Todos os seeders foram executados com sucesso!');
   }

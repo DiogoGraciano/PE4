@@ -4,6 +4,7 @@ import type { Company } from '../../types';
 import DataTable, { type Column, type ActionButton } from '../../components/DataTable';
 import SearchFilter from '../../components/SearchFilter';
 import Modal from '../../components/Modal';
+import ReportModal, { type ReportOption } from '../../components/ReportModal';
 import { CompanyForm, type CompanyFormData } from '../../components/forms';
 import { useCompanies, useCreateCompany, useUpdateCompany, useDeleteCompany } from '../../hooks/useCompanies';
 
@@ -15,6 +16,12 @@ const Companies: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+
+  const companyReportOptions: ReportOption[] = [
+    { label: 'Lista completa de empresas', type: 'full', description: 'Todas as empresas com endereço' },
+    { label: 'Empresas agrupadas por estado', type: 'by-state', description: 'Empresas organizadas por estado' },
+  ];
 
   const [formData, setFormData] = useState<CompanyFormData>({
     razao_social: '',
@@ -305,10 +312,11 @@ const Companies: React.FC = () => {
           </button>
 
           <button
+            onClick={() => setReportModalOpen(true)}
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
               <DownloadCloud className="w-4 h-4 mr-2" />
-              Gerar Relatôrio
+              Gerar Relatório
           </button>
           </>
         }
@@ -353,6 +361,14 @@ const Companies: React.FC = () => {
           errors={errors}
         />
       </Modal>
+
+      <ReportModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        title="Relatórios de Empresas"
+        entity="companies"
+        options={companyReportOptions}
+      />
     </div>
   );
 };
