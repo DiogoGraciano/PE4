@@ -278,13 +278,12 @@ export class ReportsService {
         y += rowHeight;
       }
 
-      // Footer
-      const footerY = doc.page.height - 40;
+      // Footer — posicionado logo após a última linha da tabela
       doc
         .fontSize(8)
         .fillColor('#64748b')
         .font('Helvetica')
-        .text(`Total de registros: ${total}`, 40, footerY, { width: pageWidth });
+        .text(`Total de registros: ${total}`, 40, y + 8, { width: pageWidth });
 
       doc.end();
     });
