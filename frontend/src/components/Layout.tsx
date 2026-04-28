@@ -89,11 +89,11 @@ const Layout: React.FC = () => {
       {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-blue-900 text-white flex flex-col transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
-        <div className="flex items-center justify-between h-20 px-4 border-b border-blue-800 flex-shrink-0">
-          <img src="/logo-transparent.png" alt="NEXO" className="h-14 w-auto" />
+        <div className="relative flex items-center justify-center h-20 border-b border-blue-800 flex-shrink-0">
+          <img src="/logo-white.png" alt="NEXO" className="h-14 w-auto" />
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-2 rounded-md hover:bg-blue-800"
+            className="lg:hidden absolute right-3 p-2 rounded-md hover:bg-blue-800"
           >
             <X className="w-5 h-5" />
           </button>
@@ -191,7 +191,7 @@ const Layout: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
         <header className="bg-white shadow-sm border-b border-gray-200">
-          <div className="flex items-center justify-between h-16 px-6">
+          <div className="flex items-center mb:justify-between h-16 mb:px-6">
             <button
               onClick={() => setSidebarOpen(true)}
               className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
