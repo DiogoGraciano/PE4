@@ -38,16 +38,11 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-red-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-teal-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <div className="mx-auto h-20 w-20 bg-gradient-to-r from-blue-600 to-red-600 rounded-full flex items-center justify-center">
-            <Lock className="h-10 w-10 text-white" />
-          </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Sistema PE4
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <img src="/logo.webp" alt="NEXO" className="mx-auto h-28 w-auto" />
+          <p className="mt-4 text-sm text-gray-600">
             Sistema de Acompanhamento Acadêmico e Profissional
           </p>
         </div>
@@ -135,7 +130,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading || !email || !password}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-red-600 hover:from-blue-700 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-700 to-teal-600 hover:from-blue-800 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {isLoading ? (
                 <div className="flex items-center">
@@ -151,7 +146,7 @@ const Login: React.FC = () => {
 
         <div className="text-center">
           <p className="text-xs text-gray-500">
-            © 2025 PE4 - Projeto de Extensão IV
+            © 2025 NEXO - Sistema de Acompanhamento Acadêmico e Profissional
           </p>
         </div>
       </div>

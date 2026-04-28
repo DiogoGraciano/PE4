@@ -87,10 +87,10 @@ const Layout: React.FC = () => {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-blue-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-blue-900 text-white flex flex-col transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
-        <div className="flex items-center justify-between h-16 px-6 border-b border-blue-800">
-          <h1 className="text-xl font-bold">PE4 - Sistema Acadêmico</h1>
+        <div className="flex items-center justify-between h-20 px-4 border-b border-blue-800 flex-shrink-0">
+          <img src="/logo-transparent.png" alt="NEXO" className="h-14 w-auto" />
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden p-2 rounded-md hover:bg-blue-800"
@@ -99,9 +99,9 @@ const Layout: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-1 overflow-hidden">
           {/* User Info */}
-          <div className="p-4 border-b border-blue-800">
+          <div className="p-4 border-b border-blue-800 flex-shrink-0">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center">
                 <span className="text-sm font-medium">
@@ -198,16 +198,16 @@ const Layout: React.FC = () => {
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="flex items-center space-x-4">
-              <h2 className="text-lg font-medium text-gray-900">
-                Sistema de Acompanhamento Acadêmico e Profissional
+            <div className="flex items-center space-x-4 min-w-0">
+              <h2 className="text-sm sm:text-base lg:text-lg font-medium text-gray-900 truncate">
+                NEXO - Acompanhamento Acadêmico e Profissional
               </h2>
             </div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
           <Outlet />
         </main>
       </div>

@@ -43,9 +43,59 @@ function DataTable<T extends { id: number | string }>({
         );
     }
 
+    const emptyStateNode = emptyState && data.length === 0 && (
+        <div className="text-center py-12">
+            {emptyState.icon}
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{emptyState.title}</h3>
+            <p className="mt-1 text-sm text-gray-500">{emptyState.description}</p>
+        </div>
+    );
+
     return (
         <div className={`bg-white rounded-lg border border-gray-200 overflow-hidden ${className}`}>
-            <div className="overflow-x-auto">
+
+            {/* ── Mobile: cards (abaixo de md) ── */}
+            <div className="md:hidden">
+                {data.length === 0 && emptyStateNode ? (
+                    emptyStateNode
+                ) : (
+                    <div className="divide-y divide-gray-200">
+                        {data.map((item) => (
+                            <div key={item.id} className="p-4 space-y-2">
+                                {columns.map((column, index) => (
+                                    <div key={index} className="flex justify-between gap-3 min-w-0">
+                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wider flex-shrink-0">
+                                            {column.label}
+                                        </span>
+                                        <span className="text-sm text-gray-900 text-right min-w-0 break-words">
+                                            {column.render
+                                                ? column.render(item)
+                                                : String(item[column.key as keyof T] || '')}
+                                        </span>
+                                    </div>
+                                ))}
+                                {actions.length > 0 && (
+                                    <div className="flex space-x-2 pt-2 border-t border-gray-100 mt-2">
+                                        {actions.map((action, index) => (
+                                            <button
+                                                key={index}
+                                                onClick={() => action.onClick(item)}
+                                                className={`p-1 ${action.className || ''}`}
+                                                title={action.title}
+                                            >
+                                                {action.icon}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* ── Desktop: tabela (md+) ── */}
+            <div className="hidden md:block overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
@@ -95,15 +145,9 @@ function DataTable<T extends { id: number | string }>({
                         ))}
                     </tbody>
                 </table>
-            </div>
 
-            {data.length === 0 && emptyState && (
-                <div className="text-center py-12">
-                    {emptyState.icon}
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">{emptyState.title}</h3>
-                    <p className="mt-1 text-sm text-gray-500">{emptyState.description}</p>
-                </div>
-            )}
+                {data.length === 0 && emptyStateNode}
+            </div>
         </div>
     );
 }
