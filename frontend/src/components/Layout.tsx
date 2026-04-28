@@ -191,7 +191,7 @@ const Layout: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
         <header className="bg-white shadow-sm border-b border-gray-200">
-          <div className="flex items-center mb:justify-between h-16 mb:px-6">
+          <div className="flex items-center justify-between h-16 px-4 lg:px-6">
             <button
               onClick={() => setSidebarOpen(true)}
               className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
