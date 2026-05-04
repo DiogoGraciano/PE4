@@ -1,4 +1,4 @@
-# PE4 — Sistema de Acompanhamento Acadêmico e Profissional
+# Nexo — Sistema de Acompanhamento Acadêmico e Profissional
 
 ![NestJS](https://img.shields.io/badge/NestJS-11-E0234E?logo=nestjs)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
@@ -286,4 +286,4 @@ O sistema usa autenticação JWT com fluxo Bearer token:
 
 ## Licença
 
-Projeto privado — todos os direitos reservados.
+MIT License — veja o arquivo [LICENSE](LICENSE) para mais detalhes.
