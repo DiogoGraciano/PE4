@@ -3,22 +3,22 @@ version: '3.8'
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: pe4_postgres
+    container_name: nexo_postgres
     restart: always
     environment:
       POSTGRES_USER: ${DB_USERNAME:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-      POSTGRES_DB: ${DB_NAME:-pe4_db}
+      POSTGRES_DB: ${DB_NAME:-nexo_db}
     ports:
       - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - pe4_network
+      - nexo_network
 
   mailpit:
     image: axllent/mailpit
-    container_name: pe4_mailpit
+    container_name: nexo_mailpit
     restart: unless-stopped
     volumes:
       - mailpit_data:/data
@@ -31,13 +31,13 @@ services:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
     networks:
-      - pe4_network
+      - nexo_network
 
   backend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: pe4_backend
+    container_name: nexo_backend
     restart: always
     ports:
       - "${PORT:-3000}:3000"
@@ -48,7 +48,7 @@ services:
       DB_PORT: 5432
       DB_USERNAME: ${DB_USERNAME:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-postgres}
-      DB_NAME: ${DB_NAME:-pe4_db}
+      DB_NAME: ${DB_NAME:-nexo_db}
       JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-this}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
@@ -65,7 +65,7 @@ services:
       - ./src:/app/src
       - ./node_modules:/app/node_modules
     networks:
-      - pe4_network
+      - nexo_network
     command: bun run start:dev
 
 volumes:
@@ -73,6 +73,6 @@ volumes:
   mailpit_data:
 
 networks:
-  pe4_network:
+  nexo_network:
     driver: bridge
 

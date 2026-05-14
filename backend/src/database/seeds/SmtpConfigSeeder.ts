@@ -16,9 +16,9 @@ export default class SmtpConfigSeeder implements Seeder {
       await repository.save({
         host: 'smtp.gmail.com',
         port: 587,
-        user: 'sistema@pe4.com',
+        user: 'sistema@nexo.com',
         password: 'senha123',
-        from: 'Sistema PE4 <sistema@pe4.com>',
+        from: 'Sistema Nexo <sistema@nexo.com>',
         secure: false,
       });
     }

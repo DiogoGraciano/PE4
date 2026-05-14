@@ -1,9 +1,12 @@
-# PE4 Backend - API NestJS
+# Nexo Backend - API NestJS
 
-Backend da aplicação PE4, desenvolvido com NestJS, TypeORM e PostgreSQL.
+Backend da aplicação Nexo, desenvolvido com NestJS, TypeORM e PostgreSQL.
+
+> **Runtime e gerenciador de pacotes:** este projeto usa **[Bun](https://bun.sh)** como runtime e package manager oficiais. Não utilize `npm` ou `yarn` — o lockfile canônico é `bun.lock`.
 
 ## 🚀 Tecnologias
 
+- **Bun** - Runtime JavaScript e gerenciador de pacotes
 - **NestJS** - Framework Node.js
 - **TypeORM** - ORM para PostgreSQL
 - **PostgreSQL** - Banco de dados
@@ -11,13 +14,13 @@ Backend da aplicação PE4, desenvolvido com NestJS, TypeORM e PostgreSQL.
 - **Passport** - Estratégias de autenticação
 - **class-validator** - Validação de dados
 - **Nodemailer** - Envio de emails
+- **Jest** - Testes unitários e e2e
 - **Docker** - Containerização
 
 ## 📋 Pré-requisitos
 
-- Node.js 20+
+- [Bun](https://bun.sh) ≥ 1.x
 - PostgreSQL 15+ (ou Docker)
-- npm ou yarn
 
 ## 🔧 Instalação
 
@@ -46,7 +49,7 @@ A aplicação estará disponível em `http://localhost:3000`
 
 1. Instale as dependências
 ```bash
-npm install
+bun install
 ```
 
 2. Configure o banco de dados PostgreSQL e crie um database
@@ -58,11 +61,11 @@ npm install
 5. Inicie a aplicação
 ```bash
 # Desenvolvimento
-npm run start:dev
+bun run start:dev
 
 # Produção
-npm run build
-npm run start:prod
+bun run build
+bun run start:prod
 ```
 
 ## 🗄️ Estrutura do Banco de Dados
@@ -186,7 +189,7 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
-DB_NAME=pe4_db
+DB_NAME=nexo_db
 
 # JWT
 JWT_SECRET=your-super-secret-jwt-key
@@ -197,7 +200,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
 SMTP_PASSWORD=your-password
-SMTP_FROM=noreply@pe4.com
+SMTP_FROM=noreply@nexo.com
 
 # Frontend
 FRONTEND_URL=http://localhost:5173
@@ -206,20 +209,31 @@ FRONTEND_URL=http://localhost:5173
 ## 📝 Scripts Disponíveis
 
 ```bash
-# Desenvolvimento
-npm run start:dev
+bun install              # Instala dependências (gera/usa bun.lock)
+bun run start:dev        # Desenvolvimento (watch)
+bun run build            # Build de produção
+bun run start:prod       # Roda a build de produção
+bun run lint             # ESLint --fix
+bun run test             # Testes unitários (Jest)
+bun run test:watch       # Jest em modo watch
+bun run test:cov         # Testes + cobertura (meta: ≥ 90%)
+bun run test:e2e         # Testes end-to-end
+bun run seed             # Popula o banco com dados iniciais
+bun run migrate:fresh    # Recria todas as tabelas (destrói dados)
+```
 
-# Build
-npm run build
+## 🧪 Política de Testes
 
-# Produção
-npm run start:prod
+- **Cobertura mínima de 90%** em branches, functions, lines e statements. Threshold configurado em [`package.json`](package.json) (`jest.coverageThreshold`). Não rebaixe esses valores para fazer o CI passar — escreva o teste que falta.
+- **Toda nova feature e toda correção de bug DEVE vir acompanhada de teste.** Em bug fixes, inclua o teste de regressão que falha antes do fix e passa depois.
 
-# Testes
-npm run test
+Testes unitários ficam ao lado do código (`foo.service.ts` ↔ `foo.service.spec.ts`); e2e fica em [`test/`](test/) usando `test/jest-e2e.json`. Mais detalhes em [CLAUDE.md](CLAUDE.md).
 
-# Linting
-npm run lint
+Antes de abrir um PR, rode:
+
+```bash
+bun run lint
+bun run test:cov
 ```
 
 ## 🐳 Docker
@@ -240,7 +254,7 @@ docker-compose down
 docker-compose up -d --build
 
 # Acessar banco de dados
-docker-compose exec postgres psql -U postgres -d pe4_db
+docker-compose exec postgres psql -U postgres -d nexo_db
 ```
 
 ## 📦 Estrutura de Pastas
@@ -308,4 +322,4 @@ Este projeto é privado e não possui licença pública.
 
 ## 👥 Autores
 
-Desenvolvido pela equipe PE4
+Desenvolvido pela equipe Nexo

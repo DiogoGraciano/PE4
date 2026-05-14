@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Playwright / E2E
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/e2e/.auth/
+/coverage/
+/.nyc_output/
+
+# npm/yarn locks — projeto usa bun (bun.lock é o canônico)
+package-lock.json
+yarn.lock

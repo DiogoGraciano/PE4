@@ -38,3 +38,7 @@ lerna-debug.log*
 .env
 .env.local
 .env.*.local
+
+# npm/yarn locks — projeto usa bun (bun.lock é o canônico)
+package-lock.json
+yarn.lock

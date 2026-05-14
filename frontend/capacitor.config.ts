@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'br.com.pe4.nexo',
+  appId: 'br.com.nexo.app',
   appName: 'NEXO',
   webDir: 'dist',
 };

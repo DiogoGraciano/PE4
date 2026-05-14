@@ -38,11 +38,11 @@ npm run seed:run
 Após executar os seeders, você terá os seguintes usuários criados:
 
 - **Admin**: 
-  - Email: `admin@pe4.com`
+  - Email: `admin@nexo.com`
   - Senha: `admin123`
 
 - **Professor**: 
-  - Email: `professor@pe4.com`
+  - Email: `professor@nexo.com`
   - Senha: `prof123`
 
 ## Dependências

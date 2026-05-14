@@ -63,7 +63,7 @@ Sistema web para acompanhamento acadêmico e profissional de estudantes — gere
 ## Pré-requisitos
 
 - [Docker](https://www.docker.com) e Docker Compose (recomendado)
-- [Bun](https://bun.sh) ≥ 1.x **ou** Node.js ≥ 20
+- [Bun](https://bun.sh) ≥ 1.x — **runtime e gerenciador de pacotes oficial do projeto** (não use `npm`/`yarn`; `bun.lock` é o lockfile canônico)
 - [Git](https://git-scm.com)
 
 ---
@@ -74,7 +74,7 @@ Sistema web para acompanhamento acadêmico e profissional de estudantes — gere
 
 ```bash
 git clone <url-do-repositorio>
-cd PE4
+cd nexo
 ```
 
 ### 2. Configure as variáveis de ambiente do backend
@@ -115,8 +115,8 @@ Em seguida, inicie o frontend separadamente:
 
 ```bash
 cd frontend
-bun install   # ou npm install
-bun run dev   # ou npm run dev
+bun install
+bun run dev
 ```
 
 Acesse em: **http://localhost:5173**
@@ -129,8 +129,8 @@ Acesse em: **http://localhost:5173**
 
 ```bash
 cd backend
-bun install       # ou npm install
-bun run start:dev # ou npm run start:dev
+bun install
+bun run start:dev
 ```
 
 A API ficará disponível em: **http://localhost:3000**
@@ -159,7 +159,7 @@ bun run dev
 | `DB_PORT` | `5432` | Porta do PostgreSQL |
 | `DB_USERNAME` | `postgres` | Usuário do banco |
 | `DB_PASSWORD` | `postgres` | Senha do banco |
-| `DB_NAME` | `pe4_db` | Nome do banco de dados |
+| `DB_NAME` | `nexo_db` | Nome do banco de dados |
 | `JWT_SECRET` | — | Chave secreta do JWT (**obrigatório alterar**) |
 | `JWT_EXPIRES_IN` | `7d` | Expiração do token JWT |
 | `FRONTEND_URL` | `http://localhost:5173` | URL do frontend (CORS) |
@@ -183,11 +183,14 @@ bun run dev
 ### Backend
 
 ```bash
+bun install              # Instala dependências (usa bun.lock)
 bun run start:dev        # Inicia em modo desenvolvimento (watch)
 bun run build            # Compila para produção
 bun run start:prod       # Inicia a build de produção
-bun run test             # Executa os testes unitários
-bun run test:cov         # Testes com relatório de cobertura (meta: 90%)
+bun run lint             # ESLint --fix
+bun run test             # Executa os testes unitários (Jest)
+bun run test:watch       # Jest em modo watch
+bun run test:cov         # Testes com relatório de cobertura (meta: ≥ 90%)
 bun run test:e2e         # Testes end-to-end
 bun run seed             # Popula o banco com dados iniciais
 bun run migrate:fresh    # Recria todas as tabelas (destrói dados)
@@ -196,10 +199,16 @@ bun run migrate:fresh    # Recria todas as tabelas (destrói dados)
 ### Frontend
 
 ```bash
+bun install              # Instala dependências (usa bun.lock)
 bun run dev              # Servidor de desenvolvimento (Vite)
 bun run build            # Build de produção
 bun run preview          # Pré-visualiza o build de produção
 bun run lint             # Verifica o código com ESLint
+bun run test             # Testes unitários/integração (Vitest)
+bun run test:watch       # Vitest em modo watch
+bun run test:cov         # Testes com relatório de cobertura (meta: ≥ 90%)
+bun run e2e              # Testes end-to-end (Playwright)
+bun run e2e:ui           # Playwright em modo UI
 bun run generate-pwa-assets  # Gera ícones para PWA
 ```
 
@@ -208,7 +217,7 @@ bun run generate-pwa-assets  # Gera ícones para PWA
 ## Estrutura do Projeto
 
 ```
-PE4/
+nexo/
 ├── backend/
 │   ├── src/
 │   │   ├── auth/                   # Autenticação JWT, login, reset de senha
@@ -265,9 +274,9 @@ http://localhost:3000/api
 
 | Serviço | Porta | Descrição |
 |---|---|---|
-| `pe4_postgres` | `5432` | Banco de dados PostgreSQL 17 |
-| `pe4_mailpit` | `8025` (UI) / `1025` (SMTP) | Servidor de e-mail para desenvolvimento |
-| `pe4_backend` | `3000` | API NestJS |
+| `nexo_postgres` | `5432` | Banco de dados PostgreSQL 17 |
+| `nexo_mailpit` | `8025` (UI) / `1025` (SMTP) | Servidor de e-mail para desenvolvimento |
+| `nexo_backend` | `3000` | API NestJS |
 
 O Mailpit captura todos os e-mails enviados durante o desenvolvimento. Acesse a interface em **http://localhost:8025** para visualizá-los.
 
@@ -281,6 +290,33 @@ O sistema usa autenticação JWT com fluxo Bearer token:
 2. O token é incluído automaticamente em todas as requisições via header `Authorization: Bearer <token>`
 3. Tokens expiram em 7 dias (configurável via `JWT_EXPIRES_IN`)
 4. Recuperação de senha via e-mail com token de reset
+
+---
+
+## Testes e Qualidade
+
+### Política do projeto
+
+- **Cobertura mínima de 90%** (linhas, funções e statements) tanto no backend quanto no frontend. Os thresholds estão configurados em [`backend/package.json`](backend/package.json) (Jest) e em [`frontend/vite.config.ts`](frontend/vite.config.ts) (Vitest). Não rebaixe esses thresholds para fazer o CI passar — escreva o teste que falta.
+- **Toda nova feature e toda correção de bug DEVE vir acompanhada de teste.** Em bug fixes, inclua o teste de regressão que falha antes do fix e passa depois.
+
+### Stack de testes
+
+| Camada | Ferramenta | Localização |
+|---|---|---|
+| Backend — unit | [Jest](https://jestjs.io) + `@nestjs/testing` | `backend/src/**/*.spec.ts` |
+| Backend — e2e | Jest + Supertest | `backend/test/` |
+| Frontend — unit/integration | [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) | `frontend/src/**/*.test.ts(x)` |
+| Frontend — e2e | [Playwright](https://playwright.dev) (cobertura via istanbul) | `frontend/e2e/` |
+
+### Antes de abrir um PR
+
+1. `bun run test:cov` no diretório alterado — testes novos passam e cobertura ≥ 90%.
+2. `bun run lint` — sem erros.
+3. `bun run build` no frontend — type-check + build limpos.
+4. Em mudanças de UI, valide no navegador (caminho feliz + casos de borda).
+
+Mais detalhes operacionais estão em [`backend/CLAUDE.md`](backend/CLAUDE.md) e [`frontend/CLAUDE.md`](frontend/CLAUDE.md).
 
 ---
 

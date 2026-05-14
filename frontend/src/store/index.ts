@@ -5,7 +5,7 @@ import authReducer from './authSlice';
 import uiReducer from './uiSlice';
 
 const persistConfig = {
-  key: 'pe4',
+  key: 'nexo',
   storage,
   whitelist: ['auth'],
 };

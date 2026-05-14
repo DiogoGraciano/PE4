@@ -22,8 +22,8 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('PE4 API')
-    .setDescription('Documentação da API do PE4')
+    .setTitle('Nexo API')
+    .setDescription('Documentação da API do Nexo')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

@@ -1,4 +1,4 @@
-# Guia de Configuração - PE4 Backend
+# Guia de Configuração - Nexo Backend
 
 ## 🚀 Início Rápido
 
@@ -23,7 +23,7 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
-DB_NAME=pe4_db
+DB_NAME=nexo_db
 
 # JWT
 JWT_SECRET=mude-esta-chave-secreta-em-producao
@@ -34,7 +34,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=seu-email@gmail.com
 SMTP_PASSWORD=sua-senha-de-aplicativo
-SMTP_FROM=noreply@pe4.com
+SMTP_FROM=noreply@nexo.com
 
 # Frontend URL
 FRONTEND_URL=http://localhost:5173
@@ -58,7 +58,7 @@ docker-compose logs -f backend
 2. Crie o banco de dados:
 
 ```sql
-CREATE DATABASE pe4_db;
+CREATE DATABASE nexo_db;
 ```
 
 3. Inicie a aplicação:
@@ -80,7 +80,7 @@ curl -X POST http://localhost:3000/employees \
   -H "Content-Type: application/json" \
   -d '{
     "nome": "Administrador",
-    "email": "admin@pe4.com",
+    "email": "admin@nexo.com",
     "telefone": "11999999999",
     "cpf": "12345678901",
     "senha": "admin123",
@@ -108,7 +108,7 @@ Após criar o usuário, faça login:
 curl -X POST http://localhost:3000/auth \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "admin@pe4.com",
+    "email": "admin@nexo.com",
     "password": "admin123"
   }'
 ```
@@ -120,7 +120,7 @@ Você receberá um token JWT que deve ser usado nas requisições subsequentes:
   "user": {
     "id": 1,
     "nome": "Administrador",
-    "email": "admin@pe4.com",
+    "email": "admin@nexo.com",
     ...
   },
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -175,7 +175,7 @@ docker-compose logs -f
 docker-compose exec backend sh
 
 # Acessar o PostgreSQL
-docker-compose exec postgres psql -U postgres -d pe4_db
+docker-compose exec postgres psql -U postgres -d nexo_db
 
 # Reconstruir imagens
 docker-compose up -d --build
@@ -185,7 +185,7 @@ docker-compose up -d --build
 
 ```bash
 # Acessar PostgreSQL (se instalado localmente)
-psql -U postgres -d pe4_db
+psql -U postgres -d nexo_db
 
 # Ver tabelas
 \dt

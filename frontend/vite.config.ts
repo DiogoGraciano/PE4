@@ -1,12 +1,23 @@
-import { defineConfig } from 'vite'
+/// <reference types="vitest" />
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import istanbul from 'vite-plugin-istanbul'
+
+const coverageEnabled = process.env.VITE_COVERAGE === 'true'
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    coverageEnabled && istanbul({
+      include: 'src/**/*.{ts,tsx}',
+      exclude: ['node_modules', 'e2e', '**/*.d.ts', 'src/test/**'],
+      extension: ['.ts', '.tsx'],
+      requireEnv: false,
+      forceBuildInstrument: false,
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       pwaAssets: {
@@ -15,7 +26,7 @@ export default defineConfig({
       manifest: {
         name: 'NEXO',
         short_name: 'NEXO',
-        description: 'Sistema de Gestão PE4',
+        description: 'Sistema de Gestão Nexo',
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
@@ -40,4 +51,31 @@ export default defineConfig({
       },
     }),
   ],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    css: false,
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['node_modules', 'dist', 'e2e/**', '**/*.d.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      thresholds: {
+        lines: 90,
+        functions: 90,
+        branches: 85,
+        statements: 90,
+      },
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/main.tsx',
+        'src/vite-env.d.ts',
+        'src/**/*.d.ts',
+        'src/assets/**',
+        'src/test/**',
+        'src/**/index.ts',
+      ],
+    },
+  },
 })

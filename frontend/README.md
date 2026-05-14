@@ -1,8 +1,8 @@
-# PE4 - Sistema de Acompanhamento Acadêmico e Profissional
+# Nexo - Sistema de Acompanhamento Acadêmico e Profissional
 
 ## 📋 Descrição do Projeto
 
-Sistema desenvolvido para o Projeto de Extensão IV (PE4) que permite o acompanhamento acadêmico e profissional de alunos, incluindo cadastros de empresas parceiras, funções/cargos, questionários e relatórios de acompanhamento.
+Sistema **Nexo** para acompanhamento acadêmico e profissional de alunos, incluindo cadastros de empresas parceiras, funções/cargos, questionários e relatórios de acompanhamento.
 
 ## 🎯 Objetivos
 
@@ -14,17 +14,22 @@ Sistema desenvolvido para o Projeto de Extensão IV (PE4) que permite o acompanh
 
 ## 🚀 Tecnologias Utilizadas
 
+- **Runtime / Package Manager**: [Bun](https://bun.sh) (oficial — não use `npm`/`yarn`; lockfile canônico é `bun.lock`)
 - **Frontend**: React 19 + TypeScript
 - **Styling**: Tailwind CSS v4
 - **Roteamento**: React Router DOM v7
+- **Estado global**: Redux Toolkit + redux-persist
+- **Server state**: TanStack Query v5
 - **HTTP Client**: Axios
 - **Ícones**: Lucide React
-- **Build Tool**: Vite
+- **Build Tool**: Vite 7
+- **Testes**: Vitest + Testing Library (unit/integration) e Playwright (e2e)
+- **PWA / Mobile**: Vite PWA + Capacitor
 
 ## 📁 Estrutura do Projeto
 
 ```
-PE4/
+nexo/
 ├── src/
 │   ├── components/          # Componentes reutilizáveis
 │   │   └── Layout.tsx      # Layout principal com menu lateral
@@ -83,31 +88,30 @@ PE4/
 ## 🛠️ Instalação e Configuração
 
 ### Pré-requisitos
-- Node.js 18+ 
-- npm ou yarn
+- [Bun](https://bun.sh) ≥ 1.x
 
 ### Passos de Instalação
 
 1. **Clone o repositório**
    ```bash
    git clone <url-do-repositorio>
-   cd PE4
+   cd nexo/frontend
    ```
 
 2. **Instale as dependências**
    ```bash
-   npm install
+   bun install
    ```
 
 3. **Configure as variáveis de ambiente**
    ```bash
-   # Crie um arquivo .env na raiz do projeto
-   VITE_API_URL=http://localhost:8000/api
+   # Crie um arquivo .env na raiz do projeto frontend
+   VITE_API_URL=http://localhost:3000
    ```
 
 4. **Execute o projeto**
    ```bash
-   npm run dev
+   bun run dev
    ```
 
 5. **Acesse o sistema**
@@ -117,14 +121,19 @@ PE4/
 
 ## 🔧 Scripts Disponíveis
 
-- `npm run dev` - Inicia o servidor de desenvolvimento
-- `npm run build` - Gera build de produção
-- `npm run preview` - Visualiza o build de produção
-- `npm run lint` - Executa o linter
-- `npm run api` - Inicia a API com json-server (porta 8000)
-- `npm run server` - Inicia o servidor personalizado com autenticação
-- `npm run json-server` - Inicia json-server básico
-- `npm run json-server-auth` - Inicia json-server com middlewares de autenticação
+```bash
+bun install              # Instala dependências (gera/usa bun.lock)
+bun run dev              # Servidor de desenvolvimento (Vite)
+bun run build            # Build de produção (tsc -b && vite build)
+bun run preview          # Pré-visualiza o build
+bun run lint             # ESLint
+bun run test             # Testes unitários/integração (Vitest)
+bun run test:watch       # Vitest em modo watch
+bun run test:cov         # Testes + cobertura (meta: ≥ 90%)
+bun run e2e              # Testes end-to-end (Playwright)
+bun run e2e:ui           # Playwright em modo UI
+bun run generate-pwa-assets  # Gera ícones do PWA
+```
 
 ## 📱 Responsividade
 
@@ -133,107 +142,55 @@ O sistema é totalmente responsivo e funciona em:
 - Tablet (768px - 1023px)
 - Mobile (até 767px)
 
-## 🔌 API com JSON Server
+## 🔌 Backend / API
 
-Este projeto utiliza [json-server](https://github.com/typicode/json-server) para simular uma API REST completa durante o desenvolvimento.
+A API consumida pelo frontend é o serviço NestJS em [`../backend`](../backend). Suba o backend (via Docker ou local) antes de rodar o frontend e aponte `VITE_API_URL` para a URL da API (`http://localhost:3000` por padrão).
 
-### 🚀 Como usar a API
-
-1. **Inicie a API**:
-   ```bash
-   npm run json-server
-   ```
-
-2. **A API estará disponível em**: `http://localhost:8000`
-
-### 🔐 Autenticação
-
-A API inclui sistema de autenticação mockado com dados pré-configurados:
-
-**Credenciais de teste disponíveis**:
-- **Admin**: `admin@empresa.com` / `admin123`
-- **João Silva**: `joao@empresa.com` / `joao123`
-- **Maria Santos**: `maria@empresa.com` / `maria123`
-
-**Exemplo de login**:
-```json
-{
-  "email": "admin@empresa.com",
-  "password": "admin123"
-}
-```
-
-### 📊 Dados Mockados Disponíveis
-
-A API fornece dados mockados completos para todas as entidades do sistema:
-
-- **👥 Usuários**: `/users` - 3 usuários (admin + 2 usuários)
-- **🎓 Alunos**: `/students` - 3 alunos com dados completos
-- **🏢 Empresas**: `/companies` - 2 empresas parceiras
-- **💼 Funções**: `/functions` - 4 funções/cargos disponíveis
-- **👷 Funcionários**: `/employees` - 2 funcionários do sistema
-- **📝 Questionários**: `/questionnaires` - 3 questionários de avaliação
-- **❓ Perguntas**: `/questions` - 5 perguntas de diferentes tipos
-- **✅ Respostas**: `/answers` - Respostas mockadas
-- **📋 Respostas de Questionários**: `/questionnaire-responses` - 3 respostas completas
-- **⭐ Avaliações de Experiência**: `/experience-evaluations` - 2 avaliações
-- **📈 Acompanhamentos do Mercado**: `/job-market-follow-ups` - 2 acompanhamentos
-- **📧 SMTP Config**: `/smtp-config` - Configuração de email
-
-### 🎯 Funcionalidades Mockadas
-
-- ✅ **CRUD completo** para todas as entidades
-- ✅ **Autenticação** com JWT tokens mockados
-- ✅ **Relações entre entidades** (alunos ↔ empresas, questionários ↔ perguntas, etc.)
-- ✅ **Validações** e **filtros** automáticos
-- ✅ **Paginação** e **ordenação** nativa do json-server
-- ✅ **Busca** por texto em todos os campos
-- ✅ **Sistema de recuperação de senha**
-- ✅ **Configuração SMTP** para emails
-
-### 📋 Endpoints da API
-
-O sistema está preparado para integração com uma API REST que deve implementar os seguintes endpoints:
-
-### Autenticação
-- `POST /api/auth/login` - Login do usuário
-- `POST /api/auth/logout` - Logout do usuário
-
-### Cadastros
-- `GET/POST/PUT/DELETE /api/students` - CRUD de alunos
-- `GET/POST/PUT/DELETE /api/companies` - CRUD de empresas
-- `GET/POST/PUT/DELETE /api/functions` - CRUD de funções
-- `GET/POST/PUT/DELETE /api/employees` - CRUD de funcionários
-
-### Acompanhamentos
-- `GET/POST /api/experience-evaluations` - Avaliações de experiência
-- `GET/POST /api/job-market-follow-ups` - Acompanhamento do mercado
-- `GET/POST /api/questionnaires` - Questionários
-- `GET/POST /api/questions` - Perguntas
-- `GET/POST /api/answers` - Respostas
-
-### Relatórios
-- `GET /api/reports/students-by-company` - Alunos por empresa
-- `GET /api/reports/students-near-termination` - Alunos próximos do desligamento
+Documentação interativa (Swagger): `http://localhost:3000/api` com o backend em execução.
 
 ## 🧪 Testes
 
-Para executar os testes (quando implementados):
+### Política do projeto
+
+- **Cobertura mínima de 90%** em linhas, funções e statements. Threshold configurado em [`vite.config.ts`](vite.config.ts) (`test.coverage.thresholds`). Não rebaixe esses valores para fazer o CI passar — escreva o teste que falta.
+- **Toda nova feature e toda correção de bug DEVE vir acompanhada de teste.** Em bug fixes, inclua o teste de regressão que falha antes do fix e passa depois.
+
+### Stack
+
+- **Unit / integration**: [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com) + jsdom. Arquivos `*.test.ts` / `*.test.tsx` ao lado do código ou em `__tests__/`.
+- **E2E**: [Playwright](https://playwright.dev) em [`e2e/`](e2e/). Cobertura coletada via [`vite-plugin-istanbul`](https://github.com/iFaxity/vite-plugin-istanbul) e reportada pelo [`monocart-reporter`](https://github.com/cenfun/monocart-reporter).
+
+### Comandos
+
 ```bash
-npm test
+bun run test             # roda toda a suíte Vitest
+bun run test:watch       # watch mode
+bun run test:cov         # cobertura (HTML em coverage/, lcov para CI)
+bun run e2e              # Playwright headless
+bun run e2e:ui           # Playwright modo UI
+bun run e2e:install      # baixa o Chromium do Playwright (primeira vez)
 ```
+
+### Antes de abrir um PR
+
+1. `bun run test:cov` — testes novos passam e cobertura permanece ≥ 90%.
+2. `bun run lint` — sem erros.
+3. `bun run build` — type-check + build limpos.
+4. Em mudanças de UI, valide no navegador (caminho feliz + casos de borda).
+
+Mais detalhes operacionais em [CLAUDE.md](CLAUDE.md).
 
 ## 📦 Deploy
 
 ### Build de Produção
 ```bash
-npm run build
+bun run build
 ```
 
 ### Deploy em Servidor
-1. Execute `npm run build`
+1. Execute `bun run build`
 2. Copie a pasta `dist` para o servidor web
-3. Configure o servidor para servir o arquivo `index.html` para todas as rotas
+3. Configure o servidor para servir o arquivo `index.html` para todas as rotas (SPA fallback)
 
 ## 🤝 Contribuição
 
@@ -269,4 +226,4 @@ Para dúvidas ou problemas:
 
 ---
 
-**Desenvolvido com ❤️ pela equipe PE4**
+**Desenvolvido com ❤️ pela equipe Nexo**

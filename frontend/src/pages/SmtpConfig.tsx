@@ -346,7 +346,7 @@ const SmtpConfigPage: React.FC = () => {
                   value={config.from_name}
                   onChange={(e) => handleInputChange('from_name', e.target.value)}
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Sistema PE4"
+                  placeholder="Sistema Nexo"
                 />
               </div>
             </div>
